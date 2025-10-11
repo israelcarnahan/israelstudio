@@ -1,66 +1,71 @@
-# Dependencies
-node_modules/
+﻿# Root-only ignores (won't affect files inside israelstudio-web/)
+#/ means "only at repo root"
+/app/
+/components/
+/prisma/
+/src/
+/node_modules/
+/package.json
+/package-lock.json
+
+# Never track local env files at any depth
+*.env
+*.env.*.local
+
+# Keep giant binaries out of git (we already cleaned history)
+*.mp4
+*.mov
+*.avi
+*.zip
+*.psd
+*.ai
+
+# Allow the real app
+!/israelstudio-web/
+
+
+# ===== merged from israelstudio-web/.gitignore (20251011-184857) =====
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.pnpm-debug.log*
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# env files (can opt-in for committing if needed)
+.env*
 
-# Next.js
-.next/
-out/
-build/
+# vercel
+.vercel
 
-# Database
-*.db
-*.sqlite
-*.sqlite3
+# typescript
+*.tsbuildinfo
+next-env.d.ts
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
+/src/generated/prisma
 
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-logs
-*.log
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# Prisma
-prisma/dev.db*
-
-# Cloudinary
-cloudinary.json
