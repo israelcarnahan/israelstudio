@@ -4,13 +4,17 @@ import { Inter, Playfair_Display } from "next/font/google";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Providers } from "@/components/providers";
+import { DoodlesBG } from "@/components/doodles-bg";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-display" });
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-display",
+});
 
 export const metadata: Metadata = {
   title: "Israel's Studio",
-  description: "Funky, high-end, exploratory art — paintings, rugs, and commissions.",
+  description: "paintings, rugs, and commissions.",
   metadataBase: new URL("https://israelstudio.com"),
   openGraph: {
     title: "Israel's Studio",
@@ -22,11 +26,18 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.ico" },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${playfair.variable} bg-white text-neutral-900 antialiased`}>
+    <html lang="en" data-scroll-behavior="smooth">
+      <body
+        className={`${inter.variable} ${playfair.variable} bg-white text-neutral-900 antialiased`}
+      >
         <Providers>
+          <DoodlesBG />
           <Header />
           <main className="min-h-[70vh]">{children}</main>
           <Footer />

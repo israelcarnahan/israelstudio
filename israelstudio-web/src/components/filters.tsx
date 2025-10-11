@@ -7,21 +7,25 @@ function Chip({ href, label, active }: ChipProps) {
   return (
     <Link
       href={href}
-      className={`chip ${active ? "bg-neutral-900 text-white border-neutral-900" : ""}`}
+      className={`chip ${active ? "chip-sparkle" : "chip-ghost-sparkle"}`}
     >
       {label}
     </Link>
   );
 }
 
-export function CategoryFilters({ cats }: { cats: { slug: string; name: string }[] }) {
+export function CategoryFilters({
+  cats,
+}: {
+  cats: { slug: string; name: string }[];
+}) {
   const params = useSearchParams();
   const pathname = usePathname();
   const current = params.get("c") || "paintings";
 
   return (
     <div className="flex flex-wrap gap-2">
-      {cats.map(c => {
+      {cats.map((c) => {
         const sp = new URLSearchParams(params);
         sp.set("c", c.slug);
         const href = `${pathname}?${sp.toString()}`;

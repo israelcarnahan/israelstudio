@@ -1,22 +1,93 @@
-export default function Home() {
+import { ParallaxHero } from "@/components/parallax-hero";
+import { ScrollReveal } from "@/components/scroll-reveal";
+import FeaturedClient from "@/components/featured-carousel.client";
+import FramedCommissionForm from "@/components/FramedCommissionForm";
+
+async function getProducts() {
+  try {
+    // Try to get products from the API
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+    const response = await fetch(`${baseUrl}/api/catalog`, {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.products && Array.isArray(data.products)) {
+        return data.products;
+      }
+    }
+  } catch (error) {
+    console.log("API not available, using demo products");
+  }
+
+  // Fallback to demo products if API fails
+  return [
+    {
+      id: "pnt-001",
+      slug: "sunlit-portrait",
+      title: "Sunlit Portrait",
+      priceCents: 120000,
+      currency: "USD",
+      category: "paintings",
+      image: "/placeholder-painting.jpg",
+    },
+    {
+      id: "pnt-002",
+      slug: "electric-dream",
+      title: "Electric Dream",
+      priceCents: 180000,
+      currency: "USD",
+      category: "paintings",
+      image: "/placeholder-painting.jpg",
+    },
+    {
+      id: "pnt-003",
+      slug: "quiet-radiance",
+      title: "Quiet Radiance",
+      priceCents: 96000,
+      currency: "USD",
+      category: "paintings",
+      image: "/placeholder-painting.jpg",
+    },
+    {
+      id: "rug-001",
+      slug: "cosmic-weave",
+      title: "Cosmic Weave",
+      priceCents: 250000,
+      currency: "USD",
+      category: "rugs",
+      image: "/placeholder-rug.jpg",
+    },
+    {
+      id: "rug-002",
+      slug: "midnight-tuft",
+      title: "Midnight Tuft",
+      priceCents: 320000,
+      currency: "USD",
+      category: "rugs",
+      image: "/placeholder-rug.jpg",
+    },
+  ];
+}
+
+export default async function Home() {
+  const products = await getProducts();
+
   return (
-    <section className="container py-16">
-      <div className="grid gap-8 md:grid-cols-2 md:items-center">
-        <div>
-          <h1 className="font-display text-4xl sm:text-5xl leading-tight">
-            Art with sparkle ✨<br className="hidden sm:block" />
-            designed to make you feel.
-          </h1>
-          <p className="mt-5 text-lg text-neutral-600 max-w-prose">
-            Vibrant portraits and tactile tufted pieces. Built for joy, texture, and a little mischief.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a className="btn btn-primary" href="/shop">Shop Paintings</a>
-            <a className="btn btn-ghost" href="/commissions">Request a Commission</a>
-          </div>
-        </div>
-        <div className="aspect-square rounded-2xl bg-neutral-100 shadow-soft" />
-      </div>
-    </section>
+    <>
+      <ParallaxHero />
+
+      {/* Product carousel */}
+      <FeaturedClient slides={products} />
+
+      {/* Framed commission form on home */}
+      <section id="commission" className="container py-12 anchor-section">
+        <FramedCommissionForm />
+      </section>
+    </>
   );
 }

@@ -6,6 +6,8 @@ export type CartLine = {
   name: string;
   amountCents: number;
   quantity: number;
+  image?: string;
+  category?: string;
 };
 
 type CartCtx = {
@@ -28,17 +30,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const add: CartCtx["add"] = (l) => {
-    setLines(prev => {
-      const existing = prev.find(p => p.slug === l.slug);
+    setLines((prev) => {
+      const existing = prev.find((p) => p.slug === l.slug);
       if (existing) {
-        return prev.map(p => p.slug === l.slug ? { ...p, quantity: p.quantity + l.quantity } : p);
+        return prev.map((p) =>
+          p.slug === l.slug ? { ...p, quantity: p.quantity + l.quantity } : p
+        );
       }
       return [...prev, l];
     });
   };
 
   const remove: CartCtx["remove"] = (slug) => {
-    setLines(prev => prev.filter(p => p.slug !== slug));
+    setLines((prev) => prev.filter((p) => p.slug !== slug));
   };
 
   const clear = () => setLines([]);

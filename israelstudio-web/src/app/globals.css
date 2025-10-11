@@ -1,6 +1,14 @@
+/* stylelint-disable at-rule-no-unknown */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+.anchor-section {
+  scroll-margin-top: 88px;
+} /* keep form visible under header */
 
 /* Base tokens */
 :root {
@@ -8,12 +16,22 @@
   --fg: #0b0b0b;
 }
 
-* { min-width: 0; }
-html, body { height: 100%; }
-body { background: var(--bg); color: var(--fg); }
+* {
+  min-width: 0;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
 
 /* Typography helpers */
-.font-display { font-family: var(--font-display); }
+.font-display {
+  font-family: var(--font-display);
+}
 
 /* Layout helpers */
 @layer utilities {
@@ -28,14 +46,844 @@ body { background: var(--bg); color: var(--fg); }
     @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-900;
   }
-  .btn-primary { @apply bg-neutral-900 text-white hover:bg-neutral-800; }
-  .btn-ghost   { @apply border border-neutral-200 text-neutral-900 hover:bg-neutral-50; }
-  .btn-accent  { @apply bg-brand-pink text-black hover:opacity-90; }
-
-  .chip {
-    @apply inline-flex items-center rounded-full border border-neutral-200 px-3 py-1 text-xs text-neutral-700;
+  .btn-primary {
+    @apply bg-gradient-to-br from-pink-300 to-pink-400 text-white border-0 shadow-lg shadow-pink-200 hover:shadow-pink-300 hover:scale-105 transition-all duration-300;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 70%
+    );
+    transform: rotate(45deg);
+    transition: all 0.6s ease;
+    opacity: 0;
+  }
+  .btn-primary:hover::before {
+    opacity: 1;
+    transform: rotate(45deg) translate(100%, 100%);
+  }
+  .btn-ghost {
+    @apply bg-pink-50 text-pink-600 border-2 border-pink-200 hover:bg-pink-100 hover:border-pink-300 hover:scale-105 transition-all duration-300;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-ghost::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 182, 193, 0.3),
+      transparent
+    );
+    transition: left 0.5s ease;
+  }
+  .btn-ghost:hover::before {
+    left: 100%;
+  }
+  .btn-accent {
+    @apply bg-gradient-to-br from-pink-400 to-pink-500 text-white border-0 shadow-lg shadow-pink-300 hover:shadow-pink-400 hover:scale-105 transition-all duration-300;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-accent::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 70%
+    );
+    transform: rotate(45deg);
+    transition: all 0.6s ease;
+    opacity: 0;
+  }
+  .btn-accent:hover::before {
+    opacity: 1;
+    transform: rotate(45deg) translate(100%, 100%);
   }
 
-  header.site { @apply sticky top-0 z-40 w-full border-b border-neutral-200 bg-white/80 backdrop-blur; }
-  footer.site { @apply border-t border-neutral-200 bg-white; }
+  .chip {
+    @apply inline-flex items-center rounded-full border-2 border-pink-200 px-3 py-1 text-xs text-pink-600 bg-pink-50 hover:bg-pink-100 hover:border-pink-300 hover:scale-105 transition-all duration-300;
+  }
+
+  header.site {
+    @apply sticky top-0 z-40 w-full border-b border-neutral-200 bg-white/80 backdrop-blur;
+  }
+  footer.site {
+    @apply border-t border-neutral-200 bg-white;
+  }
+}
+
+/* Accent utilities + sparkle */
+@layer components {
+  .btn {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    right: 8%;
+    top: 35%;
+    width: 16px;
+    height: 16px;
+    background:
+      radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 40%, transparent 45%)
+        no-repeat,
+      conic-gradient(
+        from 0deg,
+        transparent 0 30%,
+        rgba(255, 255, 255, 0.9) 30% 70%,
+        transparent 70% 100%
+      );
+    border-radius: 50%;
+    transform: scale(0);
+    transition: transform 200ms ease;
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.3));
+  }
+  .btn-primary:hover::after {
+    transform: scale(1);
+  }
+}
+
+/* Doodle background container */
+.doodles {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary::after {
+    display: none;
+  }
+}
+
+/* Parallax helper */
+.parallax-wrap {
+  perspective: 1000px;
+}
+
+/* ===== FUNKY ANIMS ===== */
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg) translateZ(0);
+  }
+  25% {
+    transform: rotate(-1.2deg) translateY(-1px);
+  }
+  75% {
+    transform: rotate(1.2deg) translateY(1px);
+  }
+}
+@keyframes pop-in {
+  0% {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes sparkle-burst {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+}
+
+/* buttons: bigger pop + sparkle overlay */
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary:hover {
+  transform: translateY(-1px) scale(1.02);
+}
+.btn-primary:active {
+  transform: scale(0.98);
+}
+.btn-sparkle::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 40%, transparent 45%)
+      18% 35%/10px 10px no-repeat,
+    radial-gradient(circle, rgba(255, 255, 255, 0.85) 0 40%, transparent 45%)
+      75% 50%/7px 7px no-repeat,
+    radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 40%, transparent 45%) 52%
+      20%/8px 8px no-repeat;
+  opacity: 0;
+}
+.btn-sparkle:hover::after {
+  animation: sparkle-burst 520ms ease forwards;
+}
+
+/* card hover pop/tilt */
+.card-tilt {
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms;
+}
+.card-tilt:hover {
+  transform: translateY(-4px) rotate(0.35deg) scale(1.02);
+  box-shadow: 0 14px 45px -20px rgba(0, 0, 0, 0.35);
+}
+
+/* Doodles — stronger but still subtle */
+.doodles {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+}
+.doodles svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.doodle-lines path {
+  stroke: #0b0b0b;
+  stroke-width: 1.6;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.5;
+  stroke-dasharray: 6 8;
+  animation: doodle-walk 8s linear infinite;
+}
+@keyframes doodle-walk {
+  to {
+    stroke-dashoffset: -180;
+  }
+}
+.doodle-pops circle {
+  opacity: 0.22;
+  filter: blur(1px);
+}
+
+/* reveal utility */
+.reveal {
+  animation: pop-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary:hover,
+  .btn-primary:active,
+  .card-tilt:hover {
+    transform: none;
+  }
+  .btn-sparkle::after,
+  .doodle-lines path {
+    animation: none;
+  }
+}
+
+/* === Framed panel (updated for cartoonframetrans.png) === */
+.frame-wrap {
+  position: relative;
+  width: min(100%, 1000px);
+  margin-inline: auto;
+}
+.frame-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Tune these 4 vars to your image's opening - improved for better form fit */
+.frame-canvas {
+  --canvas-left: 12%;
+  --canvas-top: 12%;
+  --canvas-width: 76%;
+  --canvas-height: 70%;
+  position: absolute;
+  left: var(--canvas-left);
+  top: var(--canvas-top);
+  width: var(--canvas-width);
+  height: var(--canvas-height);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff8;
+  backdrop-filter: blur(1px);
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.04);
+}
+.frame-scroll {
+  height: 100%;
+  overflow: auto;
+  scrollbar-width: thin;
+  /* Improved padding for better form fit */
+  padding: 0.75rem;
+}
+.form-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 18px 45px -28px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+.input,
+.select,
+.textarea {
+  border: 1px solid #e6e6e6;
+  background: #fff;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  outline: none;
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s,
+    transform 0.03s;
+}
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: #0b0b0b;
+  box-shadow: 0 0 0 3px rgba(14, 14, 14, 0.12);
+}
+.label {
+  font-size: 0.9rem;
+  color: #444;
+}
+.help {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+.btn-funky {
+  position: relative;
+}
+.btn-funky:hover {
+  transform: translateY(-1px) scale(1.02);
+}
+.btn-funky:active {
+  transform: scale(0.98);
+}
+.btn-funky::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background:
+    radial-gradient(
+        circle at 20% 35%,
+        rgba(255, 255, 255, 0.9),
+        transparent 40%
+      )
+      no-repeat,
+    radial-gradient(
+        circle at 75% 60%,
+        rgba(255, 255, 255, 0.7),
+        transparent 40%
+      )
+      no-repeat;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.btn-funky:hover::after {
+  opacity: 0.6;
+}
+@media (max-width: 640px) {
+  .frame-canvas {
+    position: static;
+    width: 100%;
+    height: auto;
+    /* Better mobile positioning */
+    --canvas-left: 8%;
+    --canvas-top: 8%;
+    --canvas-width: 84%;
+    --canvas-height: auto;
+  }
+  .frame-scroll {
+    max-height: 70vh;
+    padding: 0.5rem;
+  }
+}
+
+/* framed videos */
+.frame2 {
+  position: relative;
+  width: min(100%, 1100px);
+  margin-inline: auto;
+}
+.frame2-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.frame2-canvas {
+  --v-left: 9%;
+  --v-top: 10%;
+  --v-width: 82%;
+  --v-height: 68%;
+  position: absolute;
+  left: var(--v-left);
+  top: var(--v-top);
+  width: var(--v-width);
+  height: var(--v-height);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+.frame2-fill {
+  width: 100%;
+  height: 100%;
+}
+.video-fit-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+.video-fit-contain {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+.framed-shadow {
+  filter: drop-shadow(0 18px 45px rgba(0, 0, 0, 0.18));
+}
+.video-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) {
+  .video-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1200px) {
+  .video-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ===== Framed slide overlay ===== */
+.slide-img-wrap {
+  position: relative;
+  overflow: visible; /* allow frame to escape upward */
+}
+
+/* Frame overlay: bottom-anchored. Positive --frame-lift moves frame upward. */
+.frame-overlay {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%) translateY(calc(-1 * var(--frame-lift, 0%)));
+  width: var(--frame-w, 112%);
+  pointer-events: none;
+  z-index: 30;
+  filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.25));
+}
+.frame-overlay img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Allow vertical overflow (string), but clip horizontal overflow to prevent page widening */
+.embla-viewport-visible {
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+/* Fallback for browsers without overflow: clip support */
+@supports not (overflow: clip) {
+  .embla-viewport-visible {
+    overflow-x: hidden;
+  }
+}
+
+/* Extra safety: an outer guard that also clips X */
+.carousel-guard {
+  overflow-x: clip;
+  overflow-y: visible;
+}
+@supports not (overflow: clip) {
+  .carousel-guard {
+    overflow-x: hidden;
+  }
+}
+
+/* Active image: render inside a padded box that matches the frame's inner area */
+.slide-img-wrap {
+  position: relative;
+  overflow: visible;
+}
+.slide-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1rem;
+}
+
+/* Standardize hero videos to consistent aspect ratio */
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* or contain, depending on your preference */
+  object-position: center;
+}
+
+/* pink buttons with wiggle and expand effects */
+.btn-sparkle {
+  background: linear-gradient(135deg, #f0d9e2, #f0c3d6, #f0aace);
+  color: white;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 4px 15px rgba(255, 140, 200, 0.3),
+    0 0 20px rgba(255, 182, 193, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-sparkle::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  transform: rotate(45deg);
+  transition: all 0.6s ease;
+  opacity: 0;
+}
+
+.btn-sparkle:hover {
+  transform: scale(1.05) rotate(1deg);
+  box-shadow:
+    0 8px 25px rgba(255, 140, 200, 0.4),
+    0 0 30px rgba(255, 182, 193, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  animation: wiggle 0.5s ease-in-out;
+}
+
+.btn-sparkle:hover::before {
+  opacity: 1;
+  transform: rotate(45deg) translate(100%, 100%);
+}
+
+.btn-sparkle:active {
+  transform: scale(0.98);
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: scale(1.05) rotate(1deg);
+  }
+  25% {
+    transform: scale(1.08) rotate(-1deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(1deg);
+  }
+  75% {
+    transform: scale(1.08) rotate(-0.5deg);
+  }
+}
+
+/* Fun ghost button with sparkle effect */
+.btn-ghost-sparkle {
+  background: rgba(255, 182, 193, 0.1);
+  color: #ff8cc8;
+  border: 2px solid rgba(255, 140, 200, 0.3);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+
+.btn-ghost-sparkle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 182, 193, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.btn-ghost-sparkle:hover {
+  transform: scale(1.05) rotate(-1deg);
+  background: rgba(255, 182, 193, 0.2);
+  border-color: rgba(255, 140, 200, 0.5);
+  box-shadow:
+    0 4px 15px rgba(255, 140, 200, 0.2),
+    0 0 20px rgba(255, 182, 193, 0.3);
+  animation: wiggle-ghost 0.4s ease-in-out;
+}
+
+.btn-ghost-sparkle:hover::before {
+  left: 100%;
+}
+
+@keyframes wiggle-ghost {
+  0%,
+  100% {
+    transform: scale(1.05) rotate(-1deg);
+  }
+  25% {
+    transform: scale(1.08) rotate(1deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(-0.5deg);
+  }
+  75% {
+    transform: scale(1.08) rotate(0.5deg);
+  }
+}
+
+/* Sparkly category filter buttons */
+.chip-sparkle {
+  background: linear-gradient(135deg, #ffb3d1, #ff9ec7, #ff8cc8);
+  color: white;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 4px 15px rgba(255, 140, 200, 0.3),
+    0 0 20px rgba(255, 182, 193, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.chip-sparkle::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  transform: rotate(45deg);
+  transition: all 0.6s ease;
+  opacity: 0;
+}
+
+.chip-sparkle:hover {
+  transform: scale(1.05) rotate(1deg);
+  box-shadow:
+    0 8px 25px rgba(255, 140, 200, 0.4),
+    0 0 30px rgba(255, 182, 193, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  animation: wiggle-chip 0.5s ease-in-out;
+}
+
+.chip-sparkle:hover::before {
+  opacity: 1;
+  transform: rotate(45deg) translate(100%, 100%);
+}
+
+.chip-sparkle:active {
+  transform: scale(0.98);
+}
+
+@keyframes wiggle-chip {
+  0%,
+  100% {
+    transform: scale(1.05) rotate(1deg);
+  }
+  25% {
+    transform: scale(1.08) rotate(-1deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(1deg);
+  }
+  75% {
+    transform: scale(1.08) rotate(-0.5deg);
+  }
+}
+
+/* Inactive category filter with subtle sparkle */
+.chip-ghost-sparkle {
+  background: rgba(255, 182, 193, 0.1);
+  color: #ff8cc8;
+  border: 2px solid rgba(255, 140, 200, 0.3);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+
+.chip-ghost-sparkle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 182, 193, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.chip-ghost-sparkle:hover {
+  transform: scale(1.05) rotate(-1deg);
+  background: rgba(255, 182, 193, 0.2);
+  border-color: rgba(255, 140, 200, 0.5);
+  box-shadow:
+    0 4px 15px rgba(255, 140, 200, 0.2),
+    0 0 20px rgba(255, 182, 193, 0.3);
+  animation: wiggle-chip-ghost 0.4s ease-in-out;
+}
+
+.chip-ghost-sparkle:hover::before {
+  left: 100%;
+}
+
+@keyframes wiggle-chip-ghost {
+  0%,
+  100% {
+    transform: scale(1.05) rotate(-1deg);
+  }
+  25% {
+    transform: scale(1.08) rotate(1deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(-0.5deg);
+  }
+  75% {
+    transform: scale(1.08) rotate(0.5deg);
+  }
+}
+
+/* Hide the base cover image when we render the padded version */
+.slide-img.base-hidden {
+  opacity: 0;
+  transition: opacity 0.18s;
+}
+
+/* Padded inner box (tune edges per frame thickness) */
+.frame-pad {
+  position: absolute;
+  left: var(--pad-left, 6%);
+  top: var(--pad-top, 6%);
+  right: var(--pad-right, 6%);
+  bottom: var(--pad-bottom, 9%);
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+/* Performance optimizations */
+.card-tilt {
+  will-change: transform;
+  transform: translateZ(0); /* Force hardware acceleration */
+}
+
+.embla-viewport-visible {
+  will-change: transform;
+}
+
+/* Allow painting to escape for the wire bleed */
+.embla-viewport-visible {
+  contain: none;
+}
+
+.slide-img {
+  will-change: opacity;
+  transform: translateZ(0);
+}
+
+/* Optimize image loading */
+img {
+  content-visibility: auto;
+}
+
+/* Allow Y-bleed for the home carousel, clip X to avoid page widening */
+#home-carousel {
+  position: relative;
+  overflow-y: visible;
+  overflow-x: clip;
+  z-index: 2;
+}
+@supports not (overflow: clip) {
+  #home-carousel {
+    overflow-x: hidden;
+  }
+}
+
+/* Embla viewport: clip X, allow Y */
+.embla-viewport-visible {
+  overflow-y: visible;
+  overflow-x: clip;
+}
+@supports not (overflow: clip) {
+  .embla-viewport-visible {
+    overflow-x: hidden;
+  }
+}
+
+/* Ensure the slides row and cards don't clamp overlays */
+.embla-track-open {
+  overflow: visible;
+}
+.carousel-card-open {
+  overflow: visible;
+}
+
+/* (Optional) a tiny spacer above the carousel for breathing room; tweak if needed */
+.carousel-wire-gap {
+  height: 48px; /* was 24px */
 }

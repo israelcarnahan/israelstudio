@@ -1,6 +1,19 @@
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect("/signin");
+  }
+
   return (
     <div>
       <div className="border-b border-neutral-200 bg-white">
@@ -9,6 +22,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <nav className="flex gap-4 text-sm">
             <Link href="/admin">Dashboard</Link>
             <Link href="/admin/products">Products</Link>
+            <Link href="/api/auth/signout" className="text-red-600">
+              Sign Out
+            </Link>
           </nav>
         </div>
       </div>

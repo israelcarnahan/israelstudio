@@ -10,44 +10,97 @@ const UpdateSchema = z.object({
   priceCents: z.number().int().positive().optional(),
   currency: z.string().optional(),
   description: z.string().optional().nullable(),
-  status: z.enum(["DRAFT","PUBLISHED","ARCHIVED"]).optional(),
-  images: z.array(z.object({ url: z.string().url(), alt: z.string().optional(), width: z.number().nullable().optional(), height: z.number().nullable().optional(), order: z.number().optional() })).optional(),
+  status: z.string().optional(), // More flexible - accept any string
+  images: z
+    .array(
+      z.object({
+        url: z.string().url(),
+        alt: z.string().optional(),
+        width: z.number().nullable().optional(),
+        height: z.number().nullable().optional(),
+        order: z.number().optional(),
+      })
+    )
+    .optional(),
 });
 
-export async function PATCH(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(
+  _: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const { id } = await params;
   const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  if (!session)
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  const body = await _.json();
-  const data = UpdateSchema.parse(body);
+  try {
+    const body = await _.json();
+    const data = UpdateSchema.parse(body);
 
-  const updates: any = { ...data };
-  if (data.title) updates.slug = await slugify(data.title);
-  delete updates.images;
+    const updates: any = { ...data };
+    if (data.title) updates.slug = await slugify(data.title);
+    delete updates.images;
 
-  const updated = await prisma.$transaction(async (tx) => {
-    const p = await tx.product.update({ where: { id }, data: updates });
-    if (data.images) {
-      await tx.productImage.deleteMany({ where: { productId: p.id } });
-      await tx.productImage.createMany({
-        data: data.images.map((im, i) => ({
-          productId: p.id, url: im.url, alt: im.alt ?? p.title, width: im.width ?? null, height: im.height ?? null, order: im.order ?? i,
-        })),
-      });
-    }
-    return p;
-  });
+    const updated = await prisma.$transaction(async (tx) => {
+      const p = await tx.product.update({ where: { id }, data: updates });
+      if (data.images) {
+        await tx.productImage.deleteMany({ where: { productId: p.id } });
+        await tx.productImage.createMany({
+          data: data.images.map((im, i) => ({
+            productId: p.id,
+            url: im.url,
+            alt: im.alt ?? p.title,
+            width: im.width ?? null,
+            height: im.height ?? null,
+            order: im.order ?? i,
+          })),
+        });
+      }
+      return p;
+    });
 
-  await upsertAudit((session as any).uid, "UPDATE", "Product", id, data);
-  return NextResponse.json({ product: updated });
+    // Try to get user ID from session, fallback to session user id
+    const userId =
+      (session as any).uid || (session as any).user?.id || "unknown";
+    await upsertAudit(userId, "UPDATE", "Product", id, data);
+    return NextResponse.json({ product: updated });
+  } catch (error) {
+    console.error("Product update error:", error);
+    return NextResponse.json(
+      {
+        error: "Failed to update product",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
 }
 
-export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  _: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const { id } = await params;
   const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  await prisma.product.delete({ where: { id } });
-  await upsertAudit((session as any).uid, "DELETE", "Product", id);
-  return NextResponse.json({ ok: true });
+  if (!session)
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  try {
+    await prisma.product.delete({ where: { id } });
+
+    // Try to get user ID from session, fallback to session user id
+    const userId =
+      (session as any).uid || (session as any).user?.id || "unknown";
+    await upsertAudit(userId, "DELETE", "Product", id);
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("Product delete error:", error);
+    return NextResponse.json(
+      {
+        error: "Failed to delete product",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
 }
