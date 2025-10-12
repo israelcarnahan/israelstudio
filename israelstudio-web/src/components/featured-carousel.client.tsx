@@ -9,7 +9,7 @@ import { useCart } from "@/components/cart";
 const FRAME_SRC = "/carouselframe.png"; // Fixed: was pointing to non-existent colortransrame.png
 
 // This is the index of the slide/product that will be highlighted
-const HIGHLIGHT: "left" | "center" | "right" | number = "center";
+const HIGHLIGHT: "left" | "center" | "right" | number = -1; // Move two positions left from center
 // examples:
 // const HIGHLIGHT = 0       // leftmost
 // const HIGHLIGHT = 1       // leftmost + 1
@@ -17,7 +17,6 @@ const HIGHLIGHT: "left" | "center" | "right" | number = "center";
 
 export default function FeaturedClient({ slides }: { slides: any[] }) {
   const cart = useCart();
-
   // Lazy load carousel to improve initial page load
   const [isVisible, setIsVisible] = useState(false);
 
@@ -57,11 +56,73 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
     ]
   );
   const [active, setActive] = useState(0);
+  // console.log("Active state initialized:", active);
+  // console.log("Component render - dependencies:", {
+  //   embla: !!embla,
+  //   viewportRef: !!viewportRef,
+  //   HIGHLIGHT,
+  // });
+
+  // Debug when active state changes
+  // useEffect(() => {
+  //   console.log("Active state changed to:", active);
+  // }, [active]);
+
+  // Force reset active state to 0 when component mounts
+  useEffect(() => {
+    setActive(0);
+  }, []);
+
+  // Run highlight calculation directly when dependencies change
+  useEffect(() => {
+    // console.log("Direct highlight calculation running");
+    if (!embla) return;
+
+    const viewportEl = embla.containerNode();
+    if (!viewportEl) return;
+
+    const slideEls = embla.slideNodes();
+    const leftmost = embla.selectedScrollSnap();
+    const count = slideEls.length;
+
+    const vpW = viewportEl.getBoundingClientRect().width;
+    const slideW = (slideEls[leftmost] as HTMLElement).getBoundingClientRect()
+      .width;
+    const perView = Math.max(1, Math.round(vpW / slideW));
+
+    let offset: number;
+    if (typeof HIGHLIGHT === "number") {
+      offset = Math.floor(perView / 2) + HIGHLIGHT;
+    } else if (HIGHLIGHT === "left") {
+      offset = 0;
+    } else if (HIGHLIGHT === "right") {
+      offset = Math.max(0, perView - 1);
+    } else {
+      offset = Math.floor(perView / 2);
+    }
+
+    const next = (leftmost + offset + count) % count;
+    // console.log("Direct calculation result:", {
+    //   leftmost,
+    //   offset,
+    //   next,
+    //   HIGHLIGHT,
+    //   perView,
+    // });
+    setActive(next);
+  }, [embla, HIGHLIGHT]);
 
   useEffect(() => {
+    // console.log("useEffect running, embla:", !!embla, "isVisible:", isVisible);
+    // console.log("useEffect dependencies:", {
+    //   embla: !!embla,
+    //   viewportRef: !!viewportRef,
+    // });
+    // console.log("useEffect is running!");
     if (!embla) return;
 
     const computeActive = () => {
+      // console.log("computeActive called");
       const viewportEl = embla.containerNode();
       if (!viewportEl) return;
 
@@ -78,7 +139,8 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
       // Decide offset based on HIGHLIGHT
       let offset: number;
       if (typeof HIGHLIGHT === "number") {
-        offset = HIGHLIGHT; // explicit "leftmost + N"
+        // For numbers, use as offset from center (negative = left, positive = right)
+        offset = Math.floor(perView / 2) + HIGHLIGHT;
       } else if (HIGHLIGHT === "left") {
         offset = 0;
       } else if (HIGHLIGHT === "right") {
@@ -89,7 +151,16 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
       }
 
       const next = (leftmost + offset + count) % count;
+      // console.log("Highlight calculation:", {
+      //   leftmost,
+      //   offset,
+      //   next,
+      //   HIGHLIGHT,
+      //   perView,
+      // });
+      // console.log("Setting active to:", next);
       setActive(next);
+      // console.log("Active state set by highlight calculation");
     };
 
     computeActive();
@@ -97,22 +168,29 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
     embla.on("scroll", computeActive); // keeps frame tracking while dragging
     embla.on("reInit", computeActive);
 
+    // Force recompute when HIGHLIGHT changes
+    const forceRecompute = () => {
+      // console.log("Force recompute triggered");
+      computeActive();
+    };
+
+    // Set up a timer to force recompute
+    const timer = setTimeout(forceRecompute, 100);
+
     const onResize = () => computeActive();
     window.addEventListener("resize", onResize);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener("resize", onResize);
       embla.off("select", computeActive);
       embla.off("scroll", computeActive);
       embla.off("reInit", computeActive);
     };
-  }, [embla, viewportRef]);
+  }, [embla, viewportRef, HIGHLIGHT]);
 
   return (
-    <div
-      id="home-carousel"
-      className="mt-6 carousel-container max-w-7xl mx-auto px-4"
-    >
+    <div id="home-carousel" className="mt-6 carousel-container container">
       {!isVisible ? (
         <div className="aspect-square bg-neutral-100 rounded-2xl flex items-center justify-center">
           <div className="text-neutral-500">Loading carousel...</div>
@@ -121,13 +199,20 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
         <>
           <div className="carousel-wire-gap" />
           <div className="embla-viewport-visible" ref={viewportRef}>
-            <div className="flex gap-6 embla-track-open">
+            <div className="flex gap-3 embla-track-open">
               {slides.map((p, i) => {
                 const isActive = i === active;
+                // if (i === 0)
+                //   console.log("Active state:", { active, isActive, i });
                 return (
                   <article
                     key={p.id}
-                    className="min-w-[76%] sm:min-w-[44%] lg:min-w-[30%] max-w-[400px] rounded-2xl border border-neutral-200 bg-white shadow-soft carousel-card-open"
+                    className="rounded-2xl border border-neutral-200 bg-white shadow-soft carousel-card-open"
+                    style={{
+                      width: "400px",
+                      minWidth: "400px",
+                      maxWidth: "400px",
+                    }}
                   >
                     <Link href={`/product/${p.slug}`} className="block">
                       {/* IMAGE AREA ONLY — frame overlays this box */}
@@ -149,10 +234,10 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
                             style={
                               {
                                 // TUNE these 4 to match the inner transparent area of the frame, fitting the highlight product
-                                "--pad-left": "12%",
-                                "--pad-top": "4%",
-                                "--pad-right": "12%",
-                                "--pad-bottom": "9%",
+                                "--pad-left": "8%",
+                                "--pad-top": "2%",
+                                "--pad-right": "8%",
+                                "--pad-bottom": "6%",
                               } as React.CSSProperties
                             }
                           >

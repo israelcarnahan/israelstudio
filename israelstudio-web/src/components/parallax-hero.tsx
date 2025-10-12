@@ -46,19 +46,29 @@ export function ParallaxHero() {
           style={mounted ? { y, rotateX: r } : {}}
           className="will-change-transform md:col-span-1"
         >
-          <h1 className="font-display text-4xl sm:text-5xl leading-tight">
-            See it in{" "}
-            <span className="underline decoration-brand-pink underline-offset-4">
-              action
-            </span>{" "}
-            ✨
-          </h1>
+          {/* Logo png above buttons */}
+          <div className="mb-6" style={{ transform: "translateX(240px)" }}>
+            <Image
+              src="/logo.png"
+              alt="Israel's Studio"
+              width={600}
+              height={400}
+              className="hero-logo"
+              priority
+            />
+          </div>
           <p className="mt-5 text-lg text-neutral-600 max-w-prose"></p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a className="btn btn-primary" href="/shop">
+          <div
+            className="mt-8 flex gap-3 max-w-[285px]"
+            style={{ transform: "translateX(240px)" }}
+          >
+            <a className="btn btn-primary flex-1 text-base" href="/shop">
               Shop Art
             </a>
-            <a className="btn btn-ghost" href="/#commission">
+            <a
+              className="btn btn-ghost flex-1 text-base text-center"
+              href="/#commission"
+            >
               Request a Commission
             </a>
           </div>

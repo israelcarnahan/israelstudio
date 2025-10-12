@@ -22,6 +22,7 @@ html {
 html,
 body {
   height: 100%;
+  overflow-x: hidden;
 }
 body {
   background: var(--bg);
@@ -36,7 +37,8 @@ body {
 /* Layout helpers */
 @layer utilities {
   .container {
-    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+    @apply mx-auto w-full px-4 sm:px-6 lg:px-8;
+    max-width: 2100px; /* wider site cap to reduce big gutters */
   }
 }
 
@@ -462,13 +464,13 @@ body {
 /* Hero frame positioning moved to end of file for proper override */
 .frame2-img {
   display: block;
-  width: 100%;
+  width: 66%;
   height: auto;
 }
 .frame2-canvas {
-  --v-left: 9%;
+  --v-left: 49%;
   --v-top: 10%;
-  --v-width: 82%;
+  --v-width: 76%;
   --v-height: 68%;
   position: absolute;
   left: var(--v-left);
@@ -527,7 +529,7 @@ body {
   left: 50%;
   bottom: 0;
   transform: translateX(-50%) translateY(calc(-1 * var(--frame-lift, 0%)));
-  width: var(--frame-w, 112%);
+  width: var(--frame-w, 80%);
   pointer-events: none;
   z-index: 30;
   filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.25));
@@ -906,7 +908,7 @@ img {
 
 /* (Optional) a tiny spacer above the carousel for breathing room; tweak if needed */
 .carousel-wire-gap {
-  height: 60px; /* Increased spacing between hero and carousel */
+  height: -14px; /* Increased spacing between hero and carousel */
 }
 
 /* ===== HERO FRAME POSITIONING (MUST BE LAST TO OVERRIDE DEFAULTS) ===== */
@@ -922,8 +924,8 @@ img {
   height: 630px !important;
   position: relative !important;
   top: -258px !important;
-  left: 24% !important;
-  margin: 0 !important;
+  left: 23% !important; /* Adjust this value to move tvframe left/right: negative = left, positive = right */
+  margin: 0 auto !important;
   max-width: none !important;
 }
 
@@ -945,9 +947,9 @@ img {
   - --v-height: How tall the video area is
 */
 .hero-frame-container .frame2-canvas {
-  --v-left: 14% !important;
+  --v-left: 10% !important;
   --v-top: 36% !important;
-  --v-width: 58% !important;
+  --v-width: 37% !important;
   --v-height: 31% !important;
   position: absolute !important;
   left: var(--v-left) !important;
@@ -958,6 +960,13 @@ img {
   overflow: hidden !important;
   background: #000 !important;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ===== Hero Logo Sizing ===== */
+.hero-logo {
+  width: 512px !important;
+  height: auto !important;
+  max-width: 100% !important;
 }
 
 /* ===== Paint Splash Page Transition ===== */
