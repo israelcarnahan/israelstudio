@@ -20,7 +20,6 @@ export function ParallaxHero() {
   const videos = [
     "wanda.mp4",
     "modelofoiltrim.MP4",
-    "Red Wine Rug.mp4",
     "skipperpainting.mp4",
     "thefirstvaginas.mp4",
     "vaginasbythepool.mp4",
@@ -30,15 +29,15 @@ export function ParallaxHero() {
     setMounted(true);
   }, []);
 
-  // useEffect(() => {
-  //   if (!mounted) return;
+  useEffect(() => {
+    if (!mounted) return;
 
-  //   const interval = setInterval(() => {
-  //     setCurrentVideoIndex((prev) => (prev + 1) % videos.length);
-  //   }, 8000); // Change video every 8 seconds
+    const interval = setInterval(() => {
+      setCurrentVideoIndex((prev) => (prev + 1) % videos.length);
+    }, 8000); // Change video every 8 seconds
 
-  //   return () => clearInterval(interval);
-  // }, [mounted, videos.length]);
+    return () => clearInterval(interval);
+  }, [mounted, videos.length]);
 
   return (
     <section className="container py-16 parallax-wrap">
@@ -78,7 +77,7 @@ export function ParallaxHero() {
               {/* Single video with consistent sizing */}
               <video
                 key={currentVideoIndex}
-                autoPlay={false}
+                autoPlay={true}
                 muted
                 loop
                 playsInline
