@@ -11,7 +11,8 @@
     "preview": "next build && next start"
   },
   "dependencies": {
-    "@auth/prisma-adapter": "^2.10.0",
+    "@auth/core": "^0.41.0",
+    "@auth/prisma-adapter": "^2.11.0",
     "@prisma/client": "^6.16.1",
     "@react-email/render": "^1.2.3",
     "autoprefixer": "^10.4.21",
