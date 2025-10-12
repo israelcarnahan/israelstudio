@@ -1,71 +1,37 @@
-﻿# Root-only ignores (won't affect files inside israelstudio-web/)
-#/ means "only at repo root"
-/app/
-/components/
-/prisma/
-/src/
-/node_modules/
-/package.json
-/package-lock.json
+﻿# ----- Node / Next artifacts (root and nested project)
+node_modules/
+.next/
+israelstudio-web/node_modules/
+israelstudio-web/.next/
 
-# Never track local env files at any depth
-*.env
-*.env.*.local
+# Env & local
+.env
+.env.*
+!.env.example
 
-# Keep giant binaries out of git (we already cleaned history)
-*.mp4
-*.mov
-*.avi
-*.zip
-*.psd
-*.ai
-
-# Allow the real app
-!/israelstudio-web/
-
-
-# ===== merged from israelstudio-web/.gitignore (20251011-184857) =====
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+# Logs & caches
 npm-debug.log*
-yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
+*.log
+.cache/
+coverage/
 
-# env files (can opt-in for committing if needed)
-.env*
+# Editor / OS clutter
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
 
-# vercel
-.vercel
+# Build outputs
+dist/
+build/
+out/
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# Vercel / Turbo / misc
+.vercel/
+.turbo/
 
-/src/generated/prisma
-
+# Media too large for git (keep in Cloud/CDN instead)
+public/videos/*
+israelstudio-web/public/videos/*
