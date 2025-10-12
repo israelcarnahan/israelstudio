@@ -69,7 +69,7 @@ export function ParallaxHero() {
           className="relative md:col-span-3"
         >
           <FramedBox
-            frameSrc="/transredtvframe.png"
+            frameSrc="/testyellowtransphero.png"
             priority
             offsets={{ left: "8%", top: "24%", width: "69%", height: "49%" }}
           >
