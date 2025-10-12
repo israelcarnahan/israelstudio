@@ -68,9 +68,13 @@ export function ParallaxHero() {
           className="relative md:col-span-3"
         >
           <FramedBox
-            frameSrc="/testyellowtransphero.png"
+            frameSrc="/tvheroframe.png"
             priority
-            offsets={{ left: "14%", top: "36%", width: "57%", height: "30%" }}
+            // FRAME POSITIONING: Controls the PNG frame image size and position within the container
+            // - left/top: Where the frame appears
+            // - width/height: How big the frame is relative to container
+            // Adjust these to resize the actual frame image itself
+            offsets={{ left: "14%", top: "36%", width: "58%", height: "31%" }}
           >
             <div className="relative h-full w-full">
               {/* Base video (cover) - hidden when we show the padded version */}
@@ -83,12 +87,15 @@ export function ParallaxHero() {
                 playsInline
                 className="hero-video"
                 style={{
-                  // TUNE these 4 to match videos in the inner transparent area of the TV frame
+                  // VIDEO POSITIONING: Controls the video content inside the frame's transparent area
+                  // - These values position the video within the PNG frame's transparent "screen" area
+                  // - Adjust these to fit videos properly inside the frame's transparent region
+                  // - Does NOT affect the frame size, only the video positioning within it
                   position: "absolute",
-                  left: "0%",
-                  top: "10%",
-                  right: "15%",
-                  bottom: "26%",
+                  left: "0%",      // How far from left edge of frame
+                  top: "-1%",      // How far from top edge of frame  
+                  right: "15%",    // How far from right edge of frame
+                  bottom: "28%",   // How far from bottom edge of frame
                 }}
                 onLoadStart={() => {
                   // Ensure smooth transitions
