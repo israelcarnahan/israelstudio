@@ -346,6 +346,7 @@ body {
 .frame-scroll {
   height: 100%;
   overflow: auto;
+  -webkit-scrollbar-width: thin;
   scrollbar-width: thin;
   /* Improved padding for better form fit */
   padding: 0.75rem;
@@ -905,7 +906,7 @@ img {
 
 /* (Optional) a tiny spacer above the carousel for breathing room; tweak if needed */
 .carousel-wire-gap {
-  height: 38px; /* was 24px */
+  height: 60px; /* Increased spacing between hero and carousel */
 }
 
 /* ===== HERO FRAME POSITIONING (MUST BE LAST TO OVERRIDE DEFAULTS) ===== */
@@ -961,6 +962,8 @@ img {
 
 /* ===== Paint Splash Page Transition ===== */
 .page-splash {
+  --splash-x: 50vw;
+  --splash-y: 50vh;
   position: fixed;
   inset: 0;
   pointer-events: none;
@@ -999,4 +1002,34 @@ img {
   .page-splash.is-active .page-splash__img {
     animation-duration: 2ms;
   }
+}
+
+/* Cross-engine fallbacks */
+html {
+  /* Chrome/Edge/Firefox already support `text-size-adjust`; add legacy WebKit as fallback */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Safari fallback for user-select */
+.selectable {
+  -webkit-user-select: text;
+  user-select: text;
+}
+.noselect {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Backdrop filter: add WebKit prefix where used */
+.backdrop-blur,
+.glass {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* "appearance" ordering hint from Issues pane */
+.appearance-reset {
+  -webkit-appearance: none;
+  appearance: none;
 }

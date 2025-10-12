@@ -133,21 +133,25 @@ export default function FramedCommissionForm() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <label className="grid gap-1">
+              <label htmlFor="fullName" className="grid gap-1">
                 <span className="label">Full name*</span>
                 <input
+                  id="fullName"
                   required
                   name="name"
+                  autoComplete="name"
                   className="input"
                   placeholder="Your name"
                 />
               </label>
-              <label className="grid gap-1">
+              <label htmlFor="email" className="grid gap-1">
                 <span className="label">Email*</span>
                 <input
+                  id="email"
                   required
                   type="email"
                   name="email"
+                  autoComplete="email"
                   className="input"
                   placeholder="you@example.com"
                 />
@@ -155,9 +159,10 @@ export default function FramedCommissionForm() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <label className="grid gap-1">
+              <label htmlFor="service" className="grid gap-1">
                 <span className="label">Service*</span>
                 <select
+                  id="service"
                   name="service"
                   className="select"
                   defaultValue="Rug"
@@ -168,9 +173,14 @@ export default function FramedCommissionForm() {
                   <option>Other</option>
                 </select>
               </label>
-              <label className="grid gap-1">
+              <label htmlFor="size" className="grid gap-1">
                 <span className="label">Estimated size</span>
-                <select name="size" className="select" defaultValue="">
+                <select
+                  id="size"
+                  name="size"
+                  className="select"
+                  defaultValue=""
+                >
                   <option value="">Select…</option>
                   <option>Small (≤18×24″)</option>
                   <option>Medium (24×36″)</option>
@@ -211,10 +221,12 @@ export default function FramedCommissionForm() {
               <p className="help">PNG/JPG, up to 5MB each, 5 files max.</p>
             </div>
 
-            <label className="grid gap-1">
+            <label htmlFor="message" className="grid gap-1">
               <span className="label">Tell me about the piece</span>
               <textarea
+                id="message"
                 name="message"
+                autoComplete="off"
                 className="textarea"
                 rows={3}
                 placeholder="Colors, vibe, deadline, refs…"

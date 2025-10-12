@@ -11,6 +11,25 @@ const nextConfig: NextConfig = {
     // Improve performance
     webVitalsAttribution: ["CLS", "LCP"],
   },
+  async headers() {
+    return [
+      {
+        // Next's build assets
+        source: "/_next/static/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        // Public assets (let the browser cache, but don't force types)
+        source: "/(images|fonts|videos|audio|favicons|icons)/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000" }],
+      },
+    ];
+  },
   // Performance optimizations
   compiler: {
     // Remove console logs in production

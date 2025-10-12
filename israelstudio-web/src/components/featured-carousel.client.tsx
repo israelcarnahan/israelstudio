@@ -109,7 +109,10 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
   }, [embla, viewportRef]);
 
   return (
-    <div id="home-carousel" className="mt-6 carousel-container">
+    <div
+      id="home-carousel"
+      className="mt-6 carousel-container max-w-7xl mx-auto px-4"
+    >
       {!isVisible ? (
         <div className="aspect-square bg-neutral-100 rounded-2xl flex items-center justify-center">
           <div className="text-neutral-500">Loading carousel...</div>
@@ -124,11 +127,11 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
                 return (
                   <article
                     key={p.id}
-                    className="min-w-[76%] sm:min-w-[44%] lg:min-w-[30%] rounded-2xl border border-neutral-200 bg-white shadow-soft carousel-card-open"
+                    className="min-w-[76%] sm:min-w-[44%] lg:min-w-[30%] max-w-[400px] rounded-2xl border border-neutral-200 bg-white shadow-soft carousel-card-open"
                   >
                     <Link href={`/product/${p.slug}`} className="block">
                       {/* IMAGE AREA ONLY — frame overlays this box */}
-                      <div className="slide-img-wrap aspect-square bg-neutral-100 rounded-2xl overflow-visible">
+                      <div className="slide-img-wrap aspect-square bg-neutral-100 rounded-2xl overflow-visible max-h-[400px] min-h-[300px]">
                         {/* Base image (cover). Hidden when active so we can show padded version instead */}
                         {p.image ? (
                           // eslint-disable-next-line @next/next/no-img-element
@@ -142,7 +145,7 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
                         {/* Active image inside a padded box so it sits fully inside the frame */}
                         {isActive && p.image && (
                           <div
-                            className="frame-pad"
+                            className="frame-pad max-h-[400px]"
                             style={
                               {
                                 // TUNE these 4 to match the inner transparent area of the frame, fitting the highlight product
