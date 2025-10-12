@@ -6,7 +6,7 @@ import { money } from "@/lib/format";
 import { useEffect, useState } from "react";
 import { useCart } from "@/components/cart";
 
-const FRAME_SRC = "/colortransrame.png"; // change to your actual file name if different
+const FRAME_SRC = "/carouselframe.png"; // Fixed: was pointing to non-existent colortransrame.png
 
 // This is the index of the slide/product that will be highlighted
 const HIGHLIGHT: "left" | "center" | "right" | number = "center";
@@ -47,13 +47,13 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
       watchDrag: true, // Only watch drag when needed
     },
     [
-      // Autoplay({
-      //   delay: 6000, // Slower to reduce CPU usage
-      //   stopOnInteraction: true, // Stop on user interaction
-      //   stopOnMouseEnter: true,
-      //   stopOnFocusIn: true, // Stop when focused
-      //   rootNode: (emblaRoot) => emblaRoot.parentElement, // Optimize root
-      // }),
+      Autoplay({
+        delay: 6000, // Slower to reduce CPU usage
+        stopOnInteraction: true, // Stop on user interaction
+        stopOnMouseEnter: true,
+        stopOnFocusIn: true, // Stop when focused
+        rootNode: (emblaRoot) => emblaRoot.parentElement, // Optimize root
+      }),
     ]
   );
   const [active, setActive] = useState(0);

@@ -7,7 +7,7 @@ import {
 } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import FramedBox from "@/components/FramedBox";
+// Removed FramedBox import - inlining frame logic directly
 
 export function ParallaxHero() {
   const [mounted, setMounted] = useState(false);
@@ -67,48 +67,59 @@ export function ParallaxHero() {
           style={mounted ? { y } : {}}
           className="relative md:col-span-3"
         >
-          <FramedBox
-            frameSrc="/tvheroframe.png"
-            priority
-            // FRAME POSITIONING: Controls the PNG frame image size and position within the container
-            // - left/top: Where the frame appears
-            // - width/height: How big the frame is relative to container
-            // Adjust these to resize the actual frame image itself
-            offsets={{ left: "14%", top: "36%", width: "58%", height: "31%" }}
-          >
-            <div className="relative h-full w-full">
-              {/* Base video (cover) - hidden when we show the padded version */}
-              {/* Single video with consistent sizing */}
-              <video
-                key={currentVideoIndex}
-                autoPlay={true}
-                muted
-                loop
-                playsInline
-                className="hero-video"
-                style={{
-                  // VIDEO POSITIONING: Controls the video content inside the frame's transparent area
-                  // - These values position the video within the PNG frame's transparent "screen" area
-                  // - Adjust these to fit videos properly inside the frame's transparent region
-                  // - Does NOT affect the frame size, only the video positioning within it
-                  position: "absolute",
-                  left: "0%",      // How far from left edge of frame
-                  top: "-1%",      // How far from top edge of frame  
-                  right: "15%",    // How far from right edge of frame
-                  bottom: "28%",   // How far from bottom edge of frame
-                }}
-                onLoadStart={() => {
-                  // Ensure smooth transitions
-                }}
-              >
-                <source
-                  src={`/videos/${videos[currentVideoIndex]}`}
-                  type="video/mp4"
-                />
-                Your browser does not support the video tag.
-              </video>
+          {/* 
+            HERO FRAME: All positioning controlled in CSS (globals.css)
+            - Frame position: .hero-frame-container
+            - Video position: .hero-frame-container .frame2-canvas
+            - To adjust: Edit the CSS values in globals.css
+          */}
+          <div className="hero-frame-container">
+            <div className="frame2 framed-shadow">
+              <Image
+                src="/tvheroframe.png"
+                alt=""
+                width={1400}
+                height={1000}
+                className="frame2-img"
+                priority
+              />
+              <div className="frame2-canvas">
+                <div className="frame2-fill">
+                  <div className="relative h-full w-full">
+                    {/* 
+                      VIDEO ELEMENT: The actual video content
+                      - This video fills the content area defined above
+                      - objectFit: "cover" ensures video fills the area properly
+                      - The content area (--v-* values) controls where this video appears
+                    */}
+                    <video
+                      key={currentVideoIndex}
+                      autoPlay={true}
+                      muted
+                      loop
+                      playsInline
+                      className="hero-video"
+                      style={{
+                        // VIDEO STYLING: Just basic video properties
+                        // - The content area above (--v-* values) controls positioning and sizing
+                        // - This only handles video-specific styling
+                        objectFit: "cover",
+                      }}
+                      onLoadStart={() => {
+                        // Ensure smooth transitions
+                      }}
+                    >
+                      <source
+                        src={`/videos/${videos[currentVideoIndex]}`}
+                        type="video/mp4"
+                      />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                </div>
+              </div>
             </div>
-          </FramedBox>
+          </div>
 
           {/* Video indicator dots */}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
