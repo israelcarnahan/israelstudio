@@ -71,7 +71,7 @@ export function ParallaxHero() {
           <FramedBox
             frameSrc="/testyellowtransphero.png"
             priority
-            offsets={{ left: "8%", top: "24%", width: "69%", height: "49%" }}
+            offsets={{ left: "14%", top: "36%", width: "57%", height: "30%" }}
           >
             <div className="relative h-full w-full">
               {/* Base video (cover) - hidden when we show the padded version */}
@@ -87,9 +87,9 @@ export function ParallaxHero() {
                   // TUNE these 4 to match videos in the inner transparent area of the TV frame
                   position: "absolute",
                   left: "0%",
-                  top: "-1%",
+                  top: "10%",
                   right: "15%",
-                  bottom: "16%",
+                  bottom: "26%",
                 }}
                 onLoadStart={() => {
                   // Ensure smooth transitions
