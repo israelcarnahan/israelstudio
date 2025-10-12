@@ -439,6 +439,26 @@ body {
   width: min(100%, 1100px);
   margin-inline: auto;
 }
+
+/* Custom frame positioning - overrides default frame2 styles */
+.frame2-custom {
+  position: relative !important;
+  margin: 0 !important;
+  max-width: none !important;
+  /* Allow inline styles to override width/height */
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Override frame2 defaults when inside frame2-custom */
+.frame2-custom .frame2 {
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  max-width: none !important;
+}
+
+/* Hero frame positioning moved to end of file for proper override */
 .frame2-img {
   display: block;
   width: 100%;
@@ -885,5 +905,56 @@ img {
 
 /* (Optional) a tiny spacer above the carousel for breathing room; tweak if needed */
 .carousel-wire-gap {
-  height: 48px; /* was 24px */
+  height: 38px; /* was 24px */
+}
+
+/* ===== HERO FRAME POSITIONING (MUST BE LAST TO OVERRIDE DEFAULTS) ===== */
+/* 
+  HERO FRAME CONTAINER: Controls frame position and size on the page
+  - width: Frame width on page
+  - height: Frame height on page  
+  - top: Move frame up/down on page (negative = up, positive = down)
+  - left: Move frame left/right on page
+*/
+.hero-frame-container {
+  width: 100% !important;
+  height: 630px !important;
+  position: relative !important;
+  top: -258px !important;
+  left: 24% !important;
+  margin: 0 !important;
+  max-width: none !important;
+}
+
+/* 
+  HERO FRAME IMAGE: Override default frame2 styles
+*/
+.hero-frame-container .frame2 {
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  max-width: none !important;
+}
+
+/* 
+  HERO VIDEO CONTENT: Controls where video appears within the frame
+  - --v-left: How far from left edge of frame
+  - --v-top: How far from top edge of frame (negative = up, positive = down)
+  - --v-width: How wide the video area is
+  - --v-height: How tall the video area is
+*/
+.hero-frame-container .frame2-canvas {
+  --v-left: 14% !important;
+  --v-top: 36% !important;
+  --v-width: 58% !important;
+  --v-height: 31% !important;
+  position: absolute !important;
+  left: var(--v-left) !important;
+  top: var(--v-top) !important;
+  width: var(--v-width) !important;
+  height: var(--v-height) !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  background: #000 !important;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08) !important;
 }
