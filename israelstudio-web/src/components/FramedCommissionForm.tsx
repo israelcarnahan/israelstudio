@@ -103,7 +103,7 @@ export default function FramedCommissionForm() {
     <div className="frame-wrap">
       {/* Transparent PNG frame */}
       <Image
-        src="/cartoonframetrans.png"
+        src="/commissionframe.png"
         alt=""
         width={1200}
         height={1200}

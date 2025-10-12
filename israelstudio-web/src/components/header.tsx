@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import SplashLink from "./SplashLink";
 import { useState } from "react";
 import { clsx } from "clsx";
 import { Brand } from "@/components/brand";
@@ -26,7 +27,7 @@ export function Header() {
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-6">
           {links.map((l) => (
-            <Link
+            <SplashLink
               key={l.href}
               href={l.href}
               className="text-sm text-neutral-800 hover:text-neutral-950 hover:underline underline-offset-4 relative flex items-center gap-2"
@@ -37,7 +38,7 @@ export function Header() {
                   {totalItems}
                 </span>
               )}
-            </Link>
+            </SplashLink>
           ))}
         </nav>
 
@@ -60,7 +61,7 @@ export function Header() {
       >
         <nav className="container py-3 flex flex-col gap-2">
           {links.map((l) => (
-            <Link
+            <SplashLink
               key={l.href}
               href={l.href}
               className="text-base py-2 flex items-center gap-2"
@@ -72,7 +73,7 @@ export function Header() {
                   {totalItems}
                 </span>
               )}
-            </Link>
+            </SplashLink>
           ))}
         </nav>
       </div>

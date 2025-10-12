@@ -5,6 +5,8 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Providers } from "@/components/providers";
 import { DoodlesBG } from "@/components/doodles-bg";
+import PageSplashTransition from "@/components/PageSplashTransition";
+import SplashListener from "./_splash-listener.client";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const playfair = Playfair_Display({
@@ -41,6 +43,9 @@ export default function RootLayout({
           <Header />
           <main className="min-h-[70vh]">{children}</main>
           <Footer />
+          {/* Global page transition overlay */}
+          <PageSplashTransition />
+          <SplashListener />
         </Providers>
       </body>
     </html>
