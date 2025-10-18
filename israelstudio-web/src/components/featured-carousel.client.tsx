@@ -190,7 +190,7 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
   }, [embla, viewportRef, HIGHLIGHT]);
 
   return (
-    <div id="home-carousel" className="mt-6 carousel-container container">
+    <div id="home-carousel" className="carousel-container container">
       {!isVisible ? (
         <div className="aspect-square bg-neutral-100 rounded-2xl flex items-center justify-center">
           <div className="text-neutral-500">Loading carousel...</div>

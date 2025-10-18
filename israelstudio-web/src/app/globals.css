@@ -328,7 +328,7 @@ body {
   height: auto;
 }
 
-/* Tune these 4 vars to your image's opening - improved for better form fit */
+/* Separate framing system (not hero TV) - used for commission forms */
 .frame-canvas {
   --canvas-left: 12%;
   --canvas-top: 12%;
@@ -436,8 +436,8 @@ body {
   }
 }
 
-/* framed videos */
-.frame2 {
+/* ===== GLOBAL FRAME DEFAULTS — affect non-hero frames only. Do **not** edit these to change the hero. ===== */
+.frame2:not(.hero-tv) {
   position: relative;
   width: min(100%, 1100px);
   margin-inline: auto;
@@ -461,17 +461,18 @@ body {
   max-width: none !important;
 }
 
-/* Hero frame positioning moved to end of file for proper override */
-.frame2-img {
+/* ===== GLOBAL FRAME DEFAULTS — affect non-hero frames only. Do **not** edit these to change the hero. ===== */
+.frame2:not(.hero-tv) .frame2-img {
   display: block;
   width: 66%;
   height: auto;
 }
-.frame2-canvas {
-  --v-left: 49%;
-  --v-top: 10%;
-  --v-width: 76%;
-  --v-height: 68%;
+
+.frame2:not(.hero-tv) .frame2-canvas {
+  --v-left: 9%;
+  --v-top: 37%;
+  --v-width: 38%;
+  --v-height: 30%;
   position: absolute;
   left: var(--v-left);
   top: var(--v-top);
@@ -908,7 +909,75 @@ img {
 
 /* (Optional) a tiny spacer above the carousel for breathing room; tweak if needed */
 .carousel-wire-gap {
-  height: -14px; /* Increased spacing between hero and carousel */
+  height: 0px; /* Increased spacing between hero and carousel */
+}
+
+/* === HERO TV — QUICK TUNING GUIDE =========================================
+
+   Change the TV's size INSIDE the hero block (without moving the block):
+   - --tv-scale (percentage width of the TV inside the hero)
+
+   Adjust where the VIDEO shows inside the TV screen (aperture):
+   - --v-left, --v-top, --v-width, --v-height (percentages of the TV box)
+
+   Scope:
+   - Global .frame2* rules apply to non-hero frames.
+   - Hero-specific rules are under .hero-tv to avoid conflicts.
+   ========================================================================= */
+
+/* ==== HERO SPACING — simple mental model ===========================
+   --hero-top   : moves the hero block up/down (neg = up)
+   --hero-height: actual height we reserve for the hero art (not 100px)
+   --hero-gap   : spacing between hero and next section
+                  (neg pulls next section up; pos adds space)
+==================================================================== */
+:root {
+  --hero-width: 100vw;
+  --hero-height: 560px; /* pick a sane default close to reality */
+  --hero-top: -720px; /* modest lift; avoid -750px cliffs */
+  --hero-left: 23%; /* move left/right */
+  --hero-gap: -450px; /* pull carousel up to reduce white space */
+  --tv-scale: 47%; /* inner TV scale inside the hero block */
+
+  /* Individual logo/button controls - adjust these directly */
+  --logo-width: 360px; /* logo size */
+  --logo-x: 135px; /* logo left/right (negative = left, positive = right) */
+  --logo-y: 0px; /* logo up/down (negative = up, positive = down) */
+  --cta-x: 135px; /* buttons left/right (negative = left, positive = right) */
+  --cta-y: -50px; /* buttons up/down (negative = up, positive = down) */
+}
+
+/* Reserve enough space for hero height only.
+   The upward lift (--hero-top) is handled by positioning, not height reservation. */
+.hero-wrap {
+  min-height: var(--hero-height);
+}
+
+/* Apply the overlap/push on the section after hero. If there is a named next section,
+   prefer that selector; otherwise this sibling rule is fine. */
+.hero-wrap + .section-after-hero,
+.hero-wrap + #home-carousel {
+  margin-top: var(--hero-gap) !important;
+}
+
+/* Alternative selector in case the sibling selector isn't working */
+#home-carousel {
+  margin-top: var(--hero-gap) !important;
+}
+
+/* =========================================================
+   HERO TV (scoped with .hero-tv)
+   - Outer placement: --hero-* vars on .hero-frame-container
+   - Inner TV size (within hero): --tv-scale on .hero-tv
+   - Video aperture inside TV: --v-* on .hero-tv .frame2-canvas
+   Everything below is hero-only and won't affect other frames.
+   ========================================================= */
+
+/* Hero image always fills hero box; do not use .frame2-img width to scale. REQUIRED include brwd img ling in website somewhere <a href="https://pikbest.com/png-images/smart-tv-vector-design-with-white-backdrop_11000170.html">Free  png images from pikbest.com</a>*/
+.hero-tv .frame2-img {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
 }
 
 /* ===== HERO FRAME POSITIONING (MUST BE LAST TO OVERRIDE DEFAULTS) ===== */
@@ -919,54 +988,33 @@ img {
   - top: Move frame up/down on page (negative = up, positive = down)
   - left: Move frame left/right on page
 */
-.hero-frame-container {
-  width: 100% !important;
-  height: 630px !important;
-  position: relative !important;
-  top: -258px !important;
-  left: 23% !important; /* Adjust this value to move tvframe left/right: negative = left, positive = right */
-  margin: 0 auto !important;
-  max-width: none !important;
+
+/* ===== BRAND WRAP: move/scale both logo and buttons together (one place to touch) ===== */
+.brand-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* left align by default */
+  gap: 14px;
+  transform-origin: top left;
+  /* default: no transform. Add one line inline when needed: style={{ transform: 'translateX(8px) translateY(0) scale(1.0)' }} */
 }
 
-/* 
-  HERO FRAME IMAGE: Override default frame2 styles
-*/
-.hero-frame-container .frame2 {
-  width: auto !important;
-  height: auto !important;
-  margin: 0 !important;
-  max-width: none !important;
-}
-
-/* 
-  HERO VIDEO CONTENT: Controls where video appears within the frame
-  - --v-left: How far from left edge of frame
-  - --v-top: How far from top edge of frame (negative = up, positive = down)
-  - --v-width: How wide the video area is
-  - --v-height: How tall the video area is
-*/
-.hero-frame-container .frame2-canvas {
-  --v-left: 10% !important;
-  --v-top: 36% !important;
-  --v-width: 37% !important;
-  --v-height: 31% !important;
-  position: absolute !important;
-  left: var(--v-left) !important;
-  top: var(--v-top) !important;
-  width: var(--v-width) !important;
-  height: var(--v-height) !important;
-  border-radius: 14px !important;
-  overflow: hidden !important;
-  background: #000 !important;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08) !important;
-}
-
-/* ===== Hero Logo Sizing ===== */
+/* Individual logo controls - adjust these variables directly */
 .hero-logo {
-  width: 512px !important;
+  width: var(--logo-width, 360px) !important;
   height: auto !important;
   max-width: 100% !important;
+  margin-left: var(--logo-x, 0px);
+  margin-top: var(--logo-y, 0px);
+}
+
+/* Individual button controls - adjust these variables directly */
+.hero-cta-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-left: var(--cta-x, 18px);
+  margin-top: var(--cta-y, 0px);
 }
 
 /* ===== Paint Splash Page Transition ===== */
@@ -1041,4 +1089,45 @@ html {
 .appearance-reset {
   -webkit-appearance: none;
   appearance: none;
+}
+
+/* === HERO FINAL OVERRIDES (must be last to win cascade) === */
+
+/* Hero frame container with height cap */
+.hero-frame-container {
+  position: relative !important;
+  width: var(--hero-width) !important;
+  height: var(--hero-height) !important;
+  top: var(--hero-top) !important;
+  left: var(--hero-left) !important;
+  margin: 0 auto !important;
+  max-width: 1600px;
+  overflow: visible;
+}
+
+/* Hero TV scale override */
+.hero-tv.frame2 {
+  width: var(--tv-scale, 66%) !important;
+  max-width: none !important;
+  margin-inline: auto;
+  /* Intentional: ensure hero scale wins over global frame2 + utilities */
+}
+
+/* Hero aperture — edit `--v-left/top/width/height` **here** to fit the TV screen. These % are relative to `.hero-tv` and will scale with `--tv-scale` and `--hero-width`. */
+.hero-tv.frame2 > .frame2-canvas {
+  --v-left: 15%;
+  --v-top: 36%;
+  --v-width: 56%;
+  --v-height: 30%;
+
+  position: absolute !important;
+  left: var(--v-left) !important;
+  top: var(--v-top) !important;
+  width: var(--v-width) !important;
+  height: var(--v-height) !important;
+
+  border-radius: 14px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
