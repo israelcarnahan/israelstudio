@@ -9,6 +9,12 @@ export default function SplashListener() {
       if (!el) return;
       const anchor = el.closest<HTMLAnchorElement>("a[href^='/']");
       if (!anchor) return;
+      
+      console.log("🔍 Global splash listener triggered", { 
+        target: el, 
+        anchor: anchor.href,
+        isCarousel: el.closest("[data-no-splash]") !== null
+      });
 
       // 🛡️ GUARD CONDITIONS (same as SplashLink)
       // Only normal left-click navigations

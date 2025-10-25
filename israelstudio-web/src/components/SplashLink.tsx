@@ -61,8 +61,13 @@ export default function SplashLink({ href, onClick, ...rest }: Props) {
         
         // 🛡️ NO-SPLASH ZONE CHECK
         // Respect [data-no-splash] containers (carousel viewport, etc.)
-        if ((e.target as Element)?.closest("[data-no-splash]")) {
-          console.log("🚫 SplashLink blocked by data-no-splash zone");
+        const noSplashElement = (e.target as Element)?.closest("[data-no-splash]");
+        if (noSplashElement) {
+          console.log("🚫 SplashLink blocked by data-no-splash zone", { 
+            element: noSplashElement, 
+            className: noSplashElement.className,
+            target: e.target 
+          });
           return;
         }
         

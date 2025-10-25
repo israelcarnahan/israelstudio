@@ -242,7 +242,11 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
         <>
           <div className="carousel-wire-gap" />
           {/* 🛡️ NO-SPLASH ZONE: avoid splash during drag/click gestures; real slide navigation uses SplashLink */}
-          <div className="embla-viewport-visible" ref={viewportRef} data-no-splash>
+          <div
+            className="embla-viewport-visible"
+            ref={viewportRef}
+            data-no-splash
+          >
             <div className="flex gap-3 embla-track-open">
               {slides.map((p, i) => {
                 const isActive = i === active;
