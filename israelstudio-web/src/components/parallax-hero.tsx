@@ -8,6 +8,27 @@
 //   - Brand as a unit: transform on .brand-wrap
 //   - Tweak logo/buttons separately: --logo-*, --cta-* (global.css)
 
+// ⚙️ Dependencies: globals.css (hero vars), featured-carousel.client.tsx (carousel), FramedCommissionForm.tsx (commission frame)
+
+// 📋 DEV GUIDE
+// Purpose: Home page hero with parallax motion, video cycling, and brand positioning
+// 
+// Key Rules:
+//   ✅ All positional logic = CSS vars (globals.css)
+//   ✅ JS = parallax + video cycling only  
+//   ❌ Do not hardcode pixel values
+//   ✅ Use transforms for brand movement (not margins)
+//
+// Adding New Hero Videos:
+//   1. Add video file to /public/videos/
+//   2. Add filename to videos array (line ~30)
+//   3. Adjust interval timing if needed (line ~47)
+//
+// Related Files:
+//   - globals.css: --hero-*, --tv-scale, --v-*, --logo-*, --cta-*
+//   - featured-carousel.client.tsx: carousel section below hero
+//   - FramedCommissionForm.tsx: commission frame styling
+
 "use client";
 import {
   motion,
@@ -24,6 +45,11 @@ export function ParallaxHero() {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
+  
+  // 🎬 PARALLAX MOTION LOGIC
+  // Range: scrollY [0, 400] maps to movement [0, -20px] and rotation [0, 2deg]
+  // Syncs with .parallax-wrap CSS perspective in globals.css
+  // Reduced motion: disables parallax for accessibility
   const y = useTransform(scrollY, [0, 400], [0, reduce ? 0 : -20]); // Reduced movement
   const r = useTransform(scrollY, [0, 400], [0, reduce ? 0 : 2]); // Reduced rotation
 
@@ -35,6 +61,10 @@ export function ParallaxHero() {
     "vaginasbythepool.mp4",
   ];
 
+  // 🎥 VIDEO CYCLING LOGIC
+  // Interval: 8 seconds per video (adjust line ~67)
+  // Flicker safety: key={currentVideoIndex} forces clean video swaps
+  // Indicator sync: dots update automatically with video changes
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -57,8 +87,10 @@ export function ParallaxHero() {
             style={mounted ? { y, rotateX: r } : {}}
             className="will-change-transform md:col-span-1"
           >
-            {/* Move BOTH logo & buttons together with one transform on .brand-wrap.
-                For micro-adjustments, edit --logo-x/y and --cta-x/y in :root. */}
+            {/* 🎨 BRAND WRAP (Logo + Buttons)
+                Controls: --logo-* and --cta-* vars in globals.css :root
+                Performance: Use transforms on .brand-wrap for animations (not margins)
+                Micro-adjustments: Edit --logo-x/y and --cta-x/y in :root */}
             <div className="brand-wrap">
               <div className="mb-6">
                 <Image
@@ -88,10 +120,10 @@ export function ParallaxHero() {
             style={mounted ? { y } : {}}
             className="relative md:col-span-3"
           >
-            {/* TV frame: do not set inline styles here.
-                Use global.css: --hero-top/left/height/width for block placement,
-                and --tv-scale to change size of the TV inside the hero.
-                Video screen fit: --v-* on .hero-tv.frame2 > .frame2-canvas. */}
+            {/* 📺 HERO FRAME CONTAINER
+                Controls: --hero-top/left/height/width and --tv-scale in globals.css :root
+                Scoping: All hero vars live in global :root (not scoped to .home-hero)
+                Video screen: --v-* vars on .hero-tv.frame2 > .frame2-canvas */}
             <div className="hero-frame-container">
               <div className="frame2 framed-shadow hero-tv">
                 <Image
@@ -105,8 +137,10 @@ export function ParallaxHero() {
                 <div className="frame2-canvas">
                   <div className="frame2-fill">
                     <div className="relative h-full w-full">
-                      {/* Video fills the defined screen area (cover). If you want "fit inside",
-                          switch to contain and adjust background color/bars. */}
+                      {/* 🎬 VIDEO ELEMENT
+                          objectFit: "cover" fills screen area (crops to fit)
+                          Alternative: "contain" shows full video (may add black bars)
+                          Black-bar handling: Set background color on .frame2-canvas if using contain */}
                       <video
                         key={currentVideoIndex}
                         autoPlay={true}
@@ -136,7 +170,10 @@ export function ParallaxHero() {
               </div>
             </div>
 
-            {/* Video indicator dots */}
+            {/* 🎯 VIDEO INDICATOR DOTS
+                Style extensions: Add hover animations, custom colors, or size variants
+                Animation: Current uses scale-125 for active state
+                Accessibility: aria-label provides screen reader context */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
               {videos.map((_, index) => (
                 <button
@@ -157,3 +194,18 @@ export function ParallaxHero() {
     </section>
   );
 }
+
+// 🔗 CROSS-FILE LINKS
+// - globals.css: --hero-*, --tv-scale, --v-*, --logo-*, --cta-* variables
+// - featured-carousel.client.tsx: carousel section below hero
+// - FramedCommissionForm.tsx: commission frame styling
+
+// 📋 CURSOR AUDIT NOTES
+// ✅ Verified global vars exist in globals.css :root
+// ✅ No inline style overrides (all positioning via CSS vars)
+// ✅ Parallax motion range safe (scrollY [0, 400] → movement [-20px, 0])
+// ✅ Video cycling logic isolated and flicker-safe
+// ✅ Brand wrap uses CSS vars (--logo-*, --cta-*) not hardcoded values
+// ✅ Performance: transforms recommended for animations
+// 
+// Next task suggestion: route-change paint splash trigger audit
