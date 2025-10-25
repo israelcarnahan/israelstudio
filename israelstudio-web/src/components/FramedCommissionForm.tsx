@@ -4,6 +4,28 @@
 //   --canvas-left/top/width/height (percent of frame-img bounds)
 //   Keep within 0–100%. Mobile overrides in global.css @media block.
 
+// ⚙️ Dependencies: globals.css (frame vars), /api/quote (form submission), PageSplashTransition.tsx (route changes)
+
+// 📋 DEV GUIDE
+// Purpose: Commission request form with transparent PNG frame overlay
+// 
+// Key Logic Areas:
+//   🎯 Frame alignment: --canvas-* vars (lines ~102-107)
+//   📤 Upload handling: filesToBase64() with 5MB size cap (lines ~44-63)
+//   📝 Form submission: payload structure for /api/quote (lines ~65-98)
+//   🎨 Dropzone: drag/drop with hover feedback (lines ~266-295)
+//
+// Key Rules:
+//   ✅ Frame vars: keep within 0-100% range
+//   ✅ File size: 5MB max per file, 5 files total
+//   ✅ Form validation: required fields + honeypot spam protection
+//   ❌ Do not hardcode frame positioning (use CSS vars)
+//
+// Related Files:
+//   - globals.css: .frame-canvas, .frame-scroll, .form-card styling
+//   - /api/quote: form submission endpoint
+//   - PageSplashTransition.tsx: route change animations
+
 "use client";
 import Image from "next/image";
 import { useState } from "react";
@@ -22,6 +44,9 @@ export default function FramedCommissionForm() {
   const [err, setErr] = useState<string | null>(null);
   const [previews, setPreviews] = useState<Preview[]>([]);
 
+  // 📁 FILE PICKER LOGIC
+  // Filters: image/* types only, max 5 files total
+  // Preview: creates object URLs for immediate display
   function onPick(files: FileList | null) {
     if (!files) return;
     const arr = Array.from(files)
@@ -41,6 +66,9 @@ export default function FramedCommissionForm() {
     setPreviews((prev) => prev.filter((_, idx) => idx !== i));
   }
 
+  // 🔄 BASE64 CONVERSION
+  // Size cap: 5MB per file (skips oversized files)
+  // Output: { fileName, contentType, data } for API payload
   async function filesToBase64(list: Preview[]) {
     const maxPerFile = 5 * 1024 * 1024; // 5MB per file
     const res: { fileName: string; contentType: string; data: string }[] = [];
@@ -62,6 +90,10 @@ export default function FramedCommissionForm() {
     return res;
   }
 
+  // 📝 FORM SUBMISSION LOGIC
+  // Payload: form data + base64 attachments for /api/quote
+  // Honeypot: 'website' field (hidden) for spam protection
+  // State: busy/ok/err for UI feedback
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
@@ -97,8 +129,10 @@ export default function FramedCommissionForm() {
     }
   }
 
-  // Tweak these if the opening doesn't match the visible hole in PNG.
-  // Example: move opening right by 2% → increase --canvas-left by 2%.
+  // 🎯 FRAME ALIGNMENT VARS
+  // Safe range: 0-100% (percent of frame-img bounds)
+  // Mobile: overrides in globals.css @media (max-width: 640px)
+  // Tweak: if opening doesn't match PNG hole, adjust these values
   const vars = {
     ["--canvas-left" as any]: "20%",
     ["--canvas-top" as any]: "20%",
@@ -197,7 +231,7 @@ export default function FramedCommissionForm() {
               </label>
             </div>
 
-            {/* Drag & drop uploads */}
+            {/* 🎨 DRAG & DROP UPLOADS */}
             <div className="grid gap-2">
               <span className="label">Reference images (up to 5)</span>
               <Dropzone onPick={onPick} />
@@ -262,7 +296,9 @@ export default function FramedCommissionForm() {
   );
 }
 
-/* --- small inline component for the dropzone --- */
+/* --- 🎨 DROPZONE COMPONENT --- */
+// Drag/drop with hover feedback and file input fallback
+// Visual: dashed border with hover state (border-neutral-800 bg-neutral-50)
 function Dropzone({ onPick }: { onPick: (files: FileList | null) => void }) {
   const [hover, setHover] = useState(false);
   return (
@@ -293,3 +329,17 @@ function Dropzone({ onPick }: { onPick: (files: FileList | null) => void }) {
     </div>
   );
 }
+
+// 🔗 CROSS-FILE LINKS
+// - globals.css: .frame-canvas, .frame-scroll, .form-card styling
+// - /api/quote: form submission endpoint
+// - PageSplashTransition.tsx: route change animations
+
+// 📋 CURSOR AUDIT NOTES
+// ✅ Verified frame vars exist in globals.css
+// ✅ File size cap: 5MB per file, 5 files max
+// ✅ Form validation: required fields + honeypot protection
+// ✅ Base64 conversion: proper data URL parsing
+// ✅ Dropzone: drag/drop with hover feedback
+// 
+// Future improvements: email validation, API retry logic, file type validation
