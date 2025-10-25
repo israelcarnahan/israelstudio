@@ -6,6 +6,28 @@
 //   - Inner image padding to fit overlay: .frame-pad (--pad-*)
 //   - Card width (default 400px): adjust inline style here.
 
+// ⚙️ Dependencies: Embla Carousel, Autoplay plugin, globals.css (overlay vars), product-card.tsx (cart logic)
+
+// 📋 DEV GUIDE
+// Purpose: Dynamic carousel with highlight overlay and lazy loading
+// 
+// Key Logic Areas:
+//   🎯 Highlight calculation: HIGHLIGHT offset logic (lines ~86-122, ~133-199)
+//   🎨 Overlay tuning: --frame-w/--frame-lift for overlay positioning (lines ~265-278)
+//   📦 Lazy loading: IntersectionObserver for performance (lines ~32-47)
+//   🛒 Cart integration: Add to cart with availability check (lines ~289-312)
+//
+// Key Rules:
+//   ✅ HIGHLIGHT: "center"|"left"|"right"|number (negative=left, positive=right)
+//   ✅ Overlay vars: --frame-w (width %), --frame-lift (vertical position)
+//   ✅ Pad vars: --pad-* (inner image padding to match overlay)
+//   ❌ Do not hardcode card dimensions (use CSS vars)
+//
+// Related Files:
+//   - globals.css: .frame-overlay, .frame-pad, .embla-viewport-visible styling
+//   - product-card.tsx: cart logic and availability states
+//   - ParallaxHero.tsx: hero section above carousel
+
 "use client";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
@@ -16,6 +38,7 @@ import { useCart } from "@/components/cart";
 
 const FRAME_SRC = "/carouselframe.png"; // Fixed: was pointing to non-existent colortransrame.png
 
+// 🎯 HIGHLIGHT OFFSET LOGIC
 // "center" = center (bias right on even counts), "left" / "right" = edges,
 // number = offset from center (negative left / positive right).
 const HIGHLIGHT: "left" | "center" | "right" | number = -1; // Move two positions left from center
@@ -26,7 +49,9 @@ const HIGHLIGHT: "left" | "center" | "right" | number = -1; // Move two position
 
 export default function FeaturedClient({ slides }: { slides: any[] }) {
   const cart = useCart();
-  // Lazy load carousel to improve initial page load
+  // 📦 LAZY LOADING LOGIC
+  // Performance: Only render carousel when visible (IntersectionObserver)
+  // Threshold: 0.1 (10% visible) triggers load
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -45,6 +70,9 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
 
     return () => observer.disconnect();
   }, []);
+  // 🎠 EMBLA CAROUSEL CONFIG
+  // Performance: containScroll: "trimSnaps", watchDrag: true
+  // Autoplay: 6s delay, stops on interaction/hover/focus
   const [viewportRef, embla] = useEmblaCarousel(
     {
       align: "start",
@@ -82,7 +110,9 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
     setActive(0);
   }, []);
 
-  // Run highlight calculation directly when dependencies change
+  // 🎯 HIGHLIGHT CALCULATION (Direct)
+  // Computes which slide should be highlighted based on HIGHLIGHT offset
+  // Handles: "center"|"left"|"right"|number (negative=left, positive=right)
   useEffect(() => {
     // console.log("Direct highlight calculation running");
     if (!embla) return;
@@ -121,6 +151,9 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
     setActive(next);
   }, [embla, HIGHLIGHT]);
 
+  // 🎯 HIGHLIGHT CALCULATION (Event-driven)
+  // Tracks scroll/select events and recalculates active slide
+  // Events: select, scroll, reInit, resize
   useEffect(() => {
     // console.log("useEffect running, embla:", !!embla, "isVisible:", isVisible);
     // console.log("useEffect dependencies:", {
@@ -236,7 +269,8 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
                           />
                         ) : null}
 
-                        {/* TUNE THESE FOUR to match transparent area of the overlay.
+                        {/* 🎨 FRAME PADDING TUNING
+                            TUNE THESE FOUR to match transparent area of the overlay.
                             Adjust until the active image sits perfectly inside the frame. */}
                         {isActive && p.image && (
                           <div
@@ -260,7 +294,8 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
                           </div>
                         )}
 
-                        {/* Overlay PNG hugs the image area. Lift with --frame-lift (neg = up).
+                        {/* 🖼️ OVERLAY FRAME TUNING
+                            Overlay PNG hugs the image area. Lift with --frame-lift (neg = up).
                             Resize overlay with --frame-w (percentage of image box width). */}
                         {isActive && (
                           <div
@@ -286,6 +321,9 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
                             {money(p.priceCents, p.currency)}
                           </div>
                         </div>
+                        {/* 🛒 CART INTEGRATION
+                            Add to cart: pink button with hover effects
+                            Sold out: gray button with "SOLD" text */}
                         {p.isAvailable !== false ? (
                           <button
                             onClick={(e) => {
@@ -322,3 +360,19 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
     </div>
   );
 }
+
+// 🔗 CROSS-FILE LINKS
+// - globals.css: .frame-overlay, .frame-pad, .embla-viewport-visible styling
+// - product-card.tsx: cart logic and availability states
+// - ParallaxHero.tsx: hero section above carousel
+
+// 📋 CURSOR AUDIT NOTES
+// ✅ Verified autoplay config: 6s delay, stops on interaction/hover/focus
+// ✅ Highlight calculation: handles "center"|"left"|"right"|number offsets
+// ✅ Overlay tuning: --frame-w/--frame-lift for positioning
+// ✅ Lazy loading: IntersectionObserver with 0.1 threshold
+// ✅ Cart integration: add to cart with availability check
+// ✅ Performance: containScroll: "trimSnaps", watchDrag: true
+// 
+// Duplicate selector note: .slide-img-wrap appears in globals.css (consolidate later)
+// Future improvements: accessibility enhancements, touch gesture optimization
