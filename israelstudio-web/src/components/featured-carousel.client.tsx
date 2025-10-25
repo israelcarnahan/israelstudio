@@ -36,6 +36,7 @@ import SplashLink from "./SplashLink";
 import { money } from "@/lib/format";
 import { useEffect, useState } from "react";
 import { useCart } from "@/components/cart";
+import { rafThrottle } from "@/lib/rafThrottle";
 
 const FRAME_SRC = "/carouselframe.png"; // Fixed: was pointing to non-existent colortransrame.png
 
@@ -220,7 +221,7 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
     // Set up a timer to force recompute
     const timer = setTimeout(forceRecompute, 100);
 
-    const onResize = () => computeActive();
+    const onResize = rafThrottle(() => computeActive());
     window.addEventListener("resize", onResize);
 
     return () => {

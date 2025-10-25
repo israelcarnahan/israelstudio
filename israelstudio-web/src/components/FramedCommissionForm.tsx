@@ -156,13 +156,16 @@ export default function FramedCommissionForm() {
       <div className="frame-canvas" style={vars}>
         <div className="frame-scroll p-3 sm:p-4">
           <form onSubmit={onSubmit} className="form-card p-4 sm:p-6 space-y-4">
-            {/* honeypot */}
+            {/* honeypot - accessible trap */}
+            <label className="sr-only" htmlFor="website">Leave this field empty</label>
             <input
-              type="text"
+              id="website"
               name="website"
-              className="hidden"
+              type="text"
               tabIndex={-1}
               autoComplete="off"
+              aria-hidden="true"
+              className="sr-only"
             />
 
             <div className="text-center">
