@@ -3,6 +3,28 @@
 // For a "fit inside" effect, switch to contain (may show letterboxing).
 // "Add to Cart" uses useCart(); "View" links to product page.
 
+// ⚙️ Dependencies: useCart hook, /lib/format (money), globals.css (btn styles)
+
+// 📋 DEV GUIDE
+// Purpose: Reusable product card for grid layouts and carousels
+// 
+// Key Logic Areas:
+//   🖼️ Image fit: object-cover for square fill (lines ~37-48)
+//   🛒 Cart integration: Add to Cart with availability check (lines ~61-84)
+//   🔗 Navigation: View button links to product page (lines ~85-87)
+//   📱 Responsive: card-tilt hover effects from globals.css
+//
+// Key Rules:
+//   ✅ Image fit: object-cover fills square, object-contain shows full image
+//   ✅ Availability: isAvailable prop controls button state
+//   ✅ Cart data: slug, name, amountCents, quantity, image, category
+//   ❌ Do not hardcode image dimensions (use aspect-square)
+//
+// Related Files:
+//   - globals.css: .card-tilt, .btn-sparkle, .btn-ghost-sparkle styling
+//   - featured-carousel.client.tsx: uses this component in carousel
+//   - /components/cart: useCart hook for cart state management
+
 "use client";
 import Link from "next/link";
 import { money } from "@/lib/format";
@@ -35,6 +57,9 @@ export function ProductCard({
       <Link href={`/product/${slug}`} className="block">
         <div className="aspect-square bg-neutral-100">
           {image ? (
+            // 🖼️ IMAGE FIT LOGIC
+            // object-cover: fills square (crops to fit)
+            // Alternative: object-contain (shows full image, may add padding)
             // If product thumbnails crop awkwardly, either:
             //   a) re-crop the source image, or
             //   b) change to object-fit: contain and accept padding.
@@ -58,6 +83,9 @@ export function ProductCard({
           {money(priceCents, currency)}
         </p>
         <div className="mt-3 flex gap-2">
+          {/* 🛒 CART INTEGRATION
+              Add to Cart: pink sparkle button with hover effects
+              Sold Out: disabled ghost button with opacity */}
           {isAvailable ? (
             <button
               className="btn btn-sparkle flex-1"
@@ -82,6 +110,8 @@ export function ProductCard({
               Sold Out
             </button>
           )}
+          {/* 🔗 NAVIGATION
+              View button: ghost sparkle style, links to product page */}
           <Link className="btn btn-ghost-sparkle" href={`/product/${slug}`}>
             View
           </Link>
@@ -90,3 +120,18 @@ export function ProductCard({
     </article>
   );
 }
+
+// 🔗 CROSS-FILE LINKS
+// - globals.css: .card-tilt, .btn-sparkle, .btn-ghost-sparkle styling
+// - featured-carousel.client.tsx: uses this component in carousel
+// - /components/cart: useCart hook for cart state management
+
+// 📋 CURSOR AUDIT NOTES
+// ✅ Verified cart integration: proper data structure (slug, name, amountCents, etc.)
+// ✅ Image fit logic: object-cover for square fill, object-contain alternative
+// ✅ Availability state: isAvailable prop controls button behavior
+// ✅ Button styles: sparkle/ghost variants from globals.css
+// ✅ Navigation: View button links to product page
+// ✅ Hover effects: card-tilt from globals.css
+// 
+// Future improvements: accessibility enhancements, loading states, error handling
