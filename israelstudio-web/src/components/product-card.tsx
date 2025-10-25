@@ -27,6 +27,7 @@
 
 "use client";
 import Link from "next/link";
+import SplashLink from "./SplashLink";
 import { money } from "@/lib/format";
 import { useCart } from "@/components/cart";
 
@@ -54,7 +55,7 @@ export function ProductCard({
   const cart = useCart();
   return (
     <article className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-soft card-tilt">
-      <Link href={`/product/${slug}`} className="block">
+      <SplashLink href={`/product/${slug}`} className="block">
         <div className="aspect-square bg-neutral-100">
           {image ? (
             // 🖼️ IMAGE FIT LOGIC
@@ -72,12 +73,12 @@ export function ProductCard({
             <div className="h-full w-full bg-[radial-gradient(circle_at_30%_30%,#f3f3f3,transparent_60%)]" />
           )}
         </div>
-      </Link>
+      </SplashLink>
       <div className="p-4">
         <h3 className="text-base font-medium">
-          <Link href={`/product/${slug}`} className="hover:underline">
+          <SplashLink href={`/product/${slug}`} className="hover:underline">
             {title}
-          </Link>
+          </SplashLink>
         </h3>
         <p className="mt-1 text-sm text-neutral-600">
           {money(priceCents, currency)}

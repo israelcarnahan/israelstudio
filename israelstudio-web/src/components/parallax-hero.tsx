@@ -38,6 +38,7 @@ import {
 } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import SplashLink from "./SplashLink";
 // Removed FramedBox import - inlining frame logic directly
 
 export function ParallaxHero() {
@@ -104,15 +105,15 @@ export function ParallaxHero() {
               </div>
               <p className="mt-5 text-lg text-neutral-600 max-w-prose"></p>
               <div className="hero-cta-row">
-                <a className="btn btn-primary flex-1 text-base" href="/shop">
+                <SplashLink className="btn btn-primary flex-1 text-base" href="/shop">
                   Shop Art
-                </a>
-                <a
+                </SplashLink>
+                <SplashLink
                   className="btn btn-ghost flex-1 text-base text-center"
                   href="/#commission"
                 >
                   Request a Commission
-                </a>
+                </SplashLink>
               </div>
             </div>
           </motion.div>

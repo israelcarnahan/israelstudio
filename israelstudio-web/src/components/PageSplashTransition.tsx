@@ -28,24 +28,21 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function PageSplashTransition() {
   const [active, setActive] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const varsRef = useRef({ x: 0, y: 0 });
   const kill = useRef<number | null>(null);
+  const pathname = usePathname();
 
   // 🌐 GLOBAL FUNCTION SETUP
   // Creates __startPageSplash on window for route-change triggers
   // Accessibility: checks prefers-reduced-motion before animating
-  // Timing: 450ms animation duration with timeout cleanup
+  // Timing: 1100ms safety timeout to prevent stuck splash
   useEffect(() => {
-    setMounted(true);
-
     (window as any).__startPageSplash = (x: number, y: number) => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      varsRef.current = { x, y };
-      // write CSS variables only after mount to avoid SSR/CSR mismatch
+      // write CSS variables immediately to avoid SSR/CSR mismatch
       const el = document.querySelector<HTMLElement>(".page-splash");
       if (el) {
         el.style.setProperty("--splash-x", `${x}px`);
@@ -53,7 +50,7 @@ export default function PageSplashTransition() {
       }
       setActive(true);
       if (kill.current) window.clearTimeout(kill.current);
-      kill.current = window.setTimeout(() => setActive(false), 450);
+      kill.current = window.setTimeout(() => setActive(false), 1100); // safety timeout
     };
     return () => {
       if (kill.current) window.clearTimeout(kill.current);
@@ -61,8 +58,14 @@ export default function PageSplashTransition() {
     };
   }, []);
 
+  // 🛡️ ROUTE CHANGE CLEAR
+  // Any route change -> ensure splash is hidden (prevents stuck residue)
+  useEffect(() => { 
+    setActive(false); 
+  }, [pathname]);
+
   // 🎨 SPLASH RENDER
-  // No inline style until mounted => avoids hydration diff
+  // Auto-clear on animation end + pathname change
   // Image: 512x512 paint splash PNG with priority loading
   return (
     <div className={`page-splash${active ? " is-active" : ""}`} aria-hidden>
@@ -73,6 +76,7 @@ export default function PageSplashTransition() {
         width={512}
         height={512}
         priority
+        onAnimationEnd={() => setActive(false)}
       />
     </div>
   );

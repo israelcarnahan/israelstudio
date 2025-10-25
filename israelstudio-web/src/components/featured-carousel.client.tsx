@@ -32,6 +32,7 @@
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import Link from "next/link";
+import SplashLink from "./SplashLink";
 import { money } from "@/lib/format";
 import { useEffect, useState } from "react";
 import { useCart } from "@/components/cart";
@@ -240,7 +241,8 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
       ) : (
         <>
           <div className="carousel-wire-gap" />
-          <div className="embla-viewport-visible" ref={viewportRef}>
+          {/* 🛡️ NO-SPLASH ZONE: avoid splash during drag/click gestures; real slide navigation uses SplashLink */}
+          <div className="embla-viewport-visible" ref={viewportRef} data-no-splash>
             <div className="flex gap-3 embla-track-open">
               {slides.map((p, i) => {
                 const isActive = i === active;
@@ -256,7 +258,7 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
                       maxWidth: "400px",
                     }}
                   >
-                    <Link href={`/product/${p.slug}`} className="block">
+                    <SplashLink href={`/product/${p.slug}`} className="block">
                       {/* IMAGE AREA ONLY — frame overlays this box */}
                       <div className="slide-img-wrap aspect-square bg-neutral-100 rounded-2xl overflow-visible max-h-[400px] min-h-[300px]">
                         {/* Base image (cover). Hidden when active so we can show padded version instead */}
@@ -349,7 +351,7 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
                           </div>
                         )}
                       </div>
-                    </Link>
+                    </SplashLink>
                   </article>
                 );
               })}

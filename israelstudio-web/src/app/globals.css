@@ -1088,6 +1088,7 @@ img {
 /* ===== Paint Splash Page Transition ===== */
 /* Splash is triggered by route-change events (not generic clicks).
    See app layout/router hook for start/stop logic. */
+/* Hide splash when inactive to prevent residual dot */
 .page-splash {
   --splash-x: 50vw;
   --splash-y: 50vh;
@@ -1097,6 +1098,17 @@ img {
   z-index: 9999;
   contain: layout paint;
 }
+.page-splash:not(.is-active) { 
+  opacity: 0; 
+  visibility: hidden; 
+}
+.page-splash.is-active { 
+  opacity: 1; 
+  visibility: visible; 
+}
+.page-splash:not(.is-active) .page-splash__img { 
+  display: none; 
+} /* prevents tiny dot */
 
 .page-splash__img {
   position: fixed;
