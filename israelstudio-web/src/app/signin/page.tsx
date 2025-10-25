@@ -1,8 +1,14 @@
 "use client";
+import { ENABLE_AUTH } from "@/lib/authFlag";
+import { notFound } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 
 export default function SignInPage() {
+  // Kill the sign-in page when auth is disabled
+  if (!ENABLE_AUTH) {
+    notFound();
+  }
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ENABLE_AUTH } from "@/lib/authFlag";
 import { getSessionSafe } from "@/lib/sessionSafe";
 import { redirect } from "next/navigation";
 
@@ -7,6 +8,23 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Show disabled message when auth is disabled
+  if (!ENABLE_AUTH) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center p-8">
+          <h1 className="font-display text-3xl mb-4">Admin Disabled</h1>
+          <p className="text-neutral-600 mb-6">
+            Admin functionality is currently disabled in this environment.
+          </p>
+          <Link href="/" className="btn btn-primary">
+            Return Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const session = await getSessionSafe();
 
   if (!session) {
