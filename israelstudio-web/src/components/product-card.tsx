@@ -7,7 +7,7 @@
 
 // 📋 DEV GUIDE
 // Purpose: Reusable product card for grid layouts and carousels
-// 
+//
 // Key Logic Areas:
 //   🖼️ Image fit: object-cover for square fill (lines ~37-48)
 //   🛒 Cart integration: Add to Cart with availability check (lines ~61-84)
@@ -133,5 +133,5 @@ export function ProductCard({
 // ✅ Button styles: sparkle/ghost variants from globals.css
 // ✅ Navigation: View button links to product page
 // ✅ Hover effects: card-tilt from globals.css
-// 
+//
 // Future improvements: accessibility enhancements, loading states, error handling

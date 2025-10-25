@@ -12,10 +12,10 @@
 
 // 📋 DEV GUIDE
 // Purpose: Home page hero with parallax motion, video cycling, and brand positioning
-// 
+//
 // Key Rules:
 //   ✅ All positional logic = CSS vars (globals.css)
-//   ✅ JS = parallax + video cycling only  
+//   ✅ JS = parallax + video cycling only
 //   ❌ Do not hardcode pixel values
 //   ✅ Use transforms for brand movement (not margins)
 //
@@ -45,7 +45,7 @@ export function ParallaxHero() {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
-  
+
   // 🎬 PARALLAX MOTION LOGIC
   // Range: scrollY [0, 400] maps to movement [0, -20px] and rotation [0, 2deg]
   // Syncs with .parallax-wrap CSS perspective in globals.css
@@ -207,5 +207,5 @@ export function ParallaxHero() {
 // ✅ Video cycling logic isolated and flicker-safe
 // ✅ Brand wrap uses CSS vars (--logo-*, --cta-*) not hardcoded values
 // ✅ Performance: transforms recommended for animations
-// 
+//
 // Next task suggestion: route-change paint splash trigger audit

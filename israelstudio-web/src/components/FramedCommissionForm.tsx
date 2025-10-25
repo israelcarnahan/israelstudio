@@ -8,7 +8,7 @@
 
 // 📋 DEV GUIDE
 // Purpose: Commission request form with transparent PNG frame overlay
-// 
+//
 // Key Logic Areas:
 //   🎯 Frame alignment: --canvas-* vars (lines ~102-107)
 //   📤 Upload handling: filesToBase64() with 5MB size cap (lines ~44-63)
@@ -341,5 +341,5 @@ function Dropzone({ onPick }: { onPick: (files: FileList | null) => void }) {
 // ✅ Form validation: required fields + honeypot protection
 // ✅ Base64 conversion: proper data URL parsing
 // ✅ Dropzone: drag/drop with hover feedback
-// 
+//
 // Future improvements: email validation, API retry logic, file type validation

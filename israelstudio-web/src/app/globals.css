@@ -555,12 +555,15 @@ body {
 ============================================================= */
 
 /* ===== Framed slide overlay ===== */
+/* NOTE: slide-img-wrap appears again below in carousel section; keep a single definition long-term. */
 .slide-img-wrap {
   position: relative;
   overflow: visible; /* allow frame to escape upward */
 }
 
 /* Frame overlay: bottom-anchored. Positive --frame-lift moves frame upward. */
+/* Option: define default --frame-w/--frame-lift here (CSS) and only override per-slide inline as needed. */
+/* Rename idea (future, docs only): .frame-overlay → .carousel-highlight-overlay */
 .frame-overlay {
   position: absolute;
   left: 50%;
@@ -578,6 +581,7 @@ body {
 }
 
 /* Allow vertical overflow (string), but clip horizontal overflow to prevent page widening */
+/* NOTE: embla-viewport-visible appears multiple times; consolidate in cleanup pass. */
 .embla-viewport-visible {
   overflow-x: clip;
   overflow-y: visible;
@@ -602,6 +606,7 @@ body {
 }
 
 /* Active image: render inside a padded box that matches the frame's inner area */
+/* NOTE: duplicated from above. Prefer consolidating into one block in a cleanup pass. */
 .slide-img-wrap {
   position: relative;
   overflow: visible;
@@ -673,6 +678,8 @@ body {
   transform: scale(0.98);
 }
 
+/* NOTE: this redefines @keyframes wiggle with different frames.
+   Keep one canonical version later to avoid confusion. */
 @keyframes wiggle {
   0%,
   100% {
@@ -876,6 +883,7 @@ body {
 }
 
 /* Padded inner box (tune edges per frame thickness) */
+/* Rename idea (future, docs only): .frame-pad → .carousel-image-pad */
 .frame-pad {
   position: absolute;
   left: var(--pad-left, 6%);
@@ -892,6 +900,7 @@ body {
   transform: translateZ(0); /* Force hardware acceleration */
 }
 
+/* NOTE: duplicate; keep one later */
 .embla-viewport-visible {
   will-change: transform;
 }
@@ -925,6 +934,7 @@ img {
 }
 
 /* Embla viewport: clip X, allow Y */
+/* NOTE: duplicate; consolidate in cleanup pass */
 .embla-viewport-visible {
   overflow-y: visible;
   overflow-x: clip;
@@ -944,6 +954,7 @@ img {
 }
 
 /* (Optional) a tiny spacer above the carousel for breathing room; tweak if needed */
+/* Rename idea (future, docs only): .carousel-wire-gap → .carousel-top-gap */
 .carousel-wire-gap {
   height: 0px; /* Increased spacing between hero and carousel */
 }
@@ -967,6 +978,11 @@ img {
      - Avoid giant negative --hero-top; it inflates reserved space math.
 ================================================================== */
 
+/* CURRENT RUNNING VALUES (intentionally outside "safe ranges")
+   - We're shipping with --hero-top:-720px and --hero-gap:-450px for our current layout.
+   - Safe ranges in docs are for future guards; do not "correct" unless you're redoing hero spacing.
+*/
+
 /* SAFE RANGES: --hero-top ~ -240..-80, --hero-height 520..680, --tv-scale 36%..56%, --hero-gap -120..+32 */
 :root {
   --hero-width: 100vw;
@@ -974,19 +990,27 @@ img {
   --hero-top: -720px; /* modest lift; avoid -750px cliffs */
   --hero-left: 23%; /* move left/right */
   --hero-gap: -450px; /* pull carousel up to reduce white space */
+  /* Rename idea (future, docs only): --hero-gap → --hero-next-gap (reads as "gap to next section"). */
   --tv-scale: 47%; /* inner TV scale inside the hero block */
+  /* Rename idea (future, docs only): --tv-scale → --hero-tv-scale for intent clarity. */
 
   /* Individual logo/button controls - adjust these directly */
   --logo-width: 360px; /* logo size */
+  /* Rename idea (future, docs only): --logo-width → --brand-logo-width */
   --logo-x: 135px; /* logo left/right (negative = left, positive = right) */
   --logo-y: 0px; /* logo up/down (negative = up, positive = down) */
+  /* Rename idea (future, docs only): --logo-x/--logo-y → --brand-logo-x/--brand-logo-y */
   --cta-x: 135px; /* buttons left/right (negative = left, positive = right) */
   --cta-y: -50px; /* buttons up/down (negative = up, positive = down) */
+  /* Rename idea (future, docs only): --cta-x/--cta-y → --brand-cta-x/--brand-cta-y */
 }
 
 /* HERO HEIGHT RESERVATION:
-   min-height = hero-height + lift (if top is negative) + positive gap only.
-   Negative gap is applied to the next section via margin-top (see below). */
+   We intentionally reserve ONLY --hero-height here.
+   - Upward lift (--hero-top < 0) and negative gap are handled via positioning
+     and the next section's margin-top (see "NEXT SECTION OFFSET").
+   - This keeps hero height stable while we "pull" the carousel upward.
+*/
 .hero-wrap {
   min-height: var(--hero-height);
 }
@@ -1042,6 +1066,7 @@ img {
 }
 
 /* Individual logo controls - adjust these variables directly */
+/* NOTE: we use margins for static alignment. If you animate movement, prefer transforms on .brand-wrap to avoid reflow. */
 .hero-logo {
   width: var(--logo-width, 360px) !important;
   height: auto !important;
@@ -1051,6 +1076,7 @@ img {
 }
 
 /* Individual button controls - adjust these variables directly */
+/* NOTE: we use margins for static alignment. If you animate movement, prefer transforms on .brand-wrap to avoid reflow. */
 .hero-cta-row {
   display: flex;
   gap: 12px;
@@ -1060,6 +1086,8 @@ img {
 }
 
 /* ===== Paint Splash Page Transition ===== */
+/* Splash is triggered by route-change events (not generic clicks).
+   See app layout/router hook for start/stop logic. */
 .page-splash {
   --splash-x: 50vw;
   --splash-y: 50vh;
@@ -1161,6 +1189,8 @@ html {
      --v-top: % from top edge
      --v-width/--v-height: % size of the visible screen
    They scale with --tv-scale automatically. */
+/* Rename idea (future, docs only): --v-* → --hero-screen-* */
+/* Rename idea (future, docs only): .frame2-canvas (hero only) → .hero-screen (keep the non-hero name elsewhere) */
 .hero-tv.frame2 > .frame2-canvas {
   --v-left: 15%;
   --v-top: 36%;
@@ -1189,10 +1219,24 @@ html {
    Product cards ........... see components/product-card.tsx
 ============================================================= */
 
-/* ⚠️ Potential Conflicts Found
-   - Two :root blocks: line 24 (basic colors) and line 971 (hero vars) - this is intentional separation
-   - .frame2 selectors have both global (line 458+) and hero-specific (line 1151+) - properly scoped with .hero-tv
-   - .hero-wrap has multiple selectors for carousel spacing (lines 997-1005) - intentional for different scenarios
-   - No duplicate variable definitions found - all hero vars are in single :root block
-   - Suggestion: Consider renaming :root to :hero-root for clarity, but current structure works fine
+/* ⚠️ Potential Conflicts / Clarity Notes
+   - :root blocks:
+       #1 (line ~24) base tokens; #2 (line ~970) hero + brand vars. Using the same selector is valid CSS.
+         Suggest: keep both but label clearly ("BASE TOKENS :root" vs "HERO VARS :root").
+   - Hero safe ranges vs current values:
+       Docs safe range says top:-240..-80 / gap:-120..+32 but we currently run top:-720 / gap:-450 by design.
+       Add a comment at :root stating current values intentionally exceed the "safe" region.
+   - Duplicate selectors:
+       .slide-img-wrap appears twice; .embla-viewport-visible appears three times; @keyframes wiggle defined twice.
+       Suggest: consolidate in a cleanup pass; for now, add "duplicated" notes near the later definitions.
+   - Naming ideas (future refactor, docs only):
+       --tv-scale → --hero-tv-scale
+       --v-* → --hero-screen-*
+       --hero-gap → --hero-next-gap
+       --logo-* / --cta-* → --brand-logo-* / --brand-cta-*
+       .frame-overlay → .carousel-highlight-overlay
+       .frame-pad → .carousel-image-pad
+       (Do not change now; add comments proposing these near each block.)
+   - Scoping idea (future):
+       Consider scoping hero vars to a wrapper (.home-hero { --hero-* }) instead of global :root to reduce bleed.
 */

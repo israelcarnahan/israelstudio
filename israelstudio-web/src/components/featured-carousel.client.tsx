@@ -10,7 +10,7 @@
 
 // 📋 DEV GUIDE
 // Purpose: Dynamic carousel with highlight overlay and lazy loading
-// 
+//
 // Key Logic Areas:
 //   🎯 Highlight calculation: HIGHLIGHT offset logic (lines ~86-122, ~133-199)
 //   🎨 Overlay tuning: --frame-w/--frame-lift for overlay positioning (lines ~265-278)
@@ -373,6 +373,6 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
 // ✅ Lazy loading: IntersectionObserver with 0.1 threshold
 // ✅ Cart integration: add to cart with availability check
 // ✅ Performance: containScroll: "trimSnaps", watchDrag: true
-// 
+//
 // Duplicate selector note: .slide-img-wrap appears in globals.css (consolidate later)
 // Future improvements: accessibility enhancements, touch gesture optimization

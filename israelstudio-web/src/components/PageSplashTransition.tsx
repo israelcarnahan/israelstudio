@@ -7,7 +7,7 @@
 
 // 📋 DEV GUIDE
 // Purpose: Global page transition animation with paint splash effect
-// 
+//
 // Key Logic Areas:
 //   🌐 Global function: __startPageSplash (lines ~14-26)
 //   ⏱️ Timeout management: 450ms animation duration (lines ~24-25)
@@ -100,5 +100,5 @@ export function triggerPageSplashFromEvent(e: {
 // ✅ CSS positioning: --splash-x/--splash-y variables set correctly
 // ✅ SSR safety: no inline styles until mounted
 // ✅ Route-only trigger: not triggered by generic clicks
-// 
+//
 // Next improvement ideas: route change detection, performance optimization
