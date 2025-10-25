@@ -74,9 +74,11 @@ export default function SplashLink({ href, onClick, ...rest }: Props) {
         }
         
         // 🎯 PATHNAME COMPARISON
-        // Only trigger splash if destination differs from current pathname
+        // Only trigger splash if destination differs from current pathname OR has different query params
         const dest = toUrl(href);
-        if (dest.pathname === pathname) return; // same page (hash/scroll)
+        if (dest.pathname === pathname && dest.search === window.location.search) {
+          return; // same page (hash/scroll)
+        }
         
         // ✨ SPLASH TRIGGER
         // All conditions met: trigger splash and navigate

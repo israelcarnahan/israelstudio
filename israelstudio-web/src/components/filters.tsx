@@ -1,16 +1,16 @@
 "use client";
-import Link from "next/link";
+import SplashLink from "./SplashLink";
 import { useSearchParams, usePathname } from "next/navigation";
 
 type ChipProps = { href: string; label: string; active: boolean };
 function Chip({ href, label, active }: ChipProps) {
   return (
-    <Link
+    <SplashLink
       href={href}
       className={`chip ${active ? "chip-sparkle" : "chip-ghost-sparkle"}`}
     >
       {label}
-    </Link>
+    </SplashLink>
   );
 }
 

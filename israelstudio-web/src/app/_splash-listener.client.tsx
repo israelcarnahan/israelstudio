@@ -26,10 +26,11 @@ export default function SplashListener() {
         }
 
         // 🎯 PATHNAME COMPARISON
-        // Only trigger splash if destination differs from current pathname
+        // Only trigger splash if destination differs from current pathname OR has different query params
         const currentPath = window.location.pathname;
-        const destPath = new URL(anchor.href, window.location.href).pathname;
-        if (destPath === currentPath) {
+        const currentSearch = window.location.search;
+        const destUrl = new URL(anchor.href, window.location.href);
+        if (destUrl.pathname === currentPath && destUrl.search === currentSearch) {
           return; // same page (hash/scroll)
         }
 
