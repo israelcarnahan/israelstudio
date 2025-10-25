@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionSafe } from "@/lib/sessionSafe";
 import { z } from "zod";
 
 const ReorderSchema = z.object({
@@ -14,7 +13,7 @@ const ReorderSchema = z.object({
 });
 
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
+    const session = await getSessionSafe();
   if (!session) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }

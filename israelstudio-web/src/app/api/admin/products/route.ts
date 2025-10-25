@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionSafe } from "@/lib/sessionSafe";
 import { z } from "zod";
 import { slugify, upsertAudit } from "@/lib/admin";
 
@@ -29,7 +28,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSessionSafe();
     if (!session) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
     const json = await req.json();

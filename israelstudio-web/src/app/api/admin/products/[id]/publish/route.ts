@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionSafe } from "@/lib/sessionSafe";
 import { upsertSquareItemSimple } from "@/lib/square";
 
 export async function POST(_: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const session = await getServerSession(authOptions);
+    const session = await getSessionSafe();
     if (!session) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
     const p = await prisma.product.findUnique({ where: { id } });
