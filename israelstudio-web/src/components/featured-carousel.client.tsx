@@ -1,3 +1,11 @@
+// 🎯 FeaturedClient (Embla)
+// Highlighted card shows an overlay frame and uses a padded inner image box.
+// EDIT MAP:
+//   - Which slide is highlighted: HIGHLIGHT ("center" | "left" | "right" | number offset)
+//   - Overlay tuning: .frame-overlay (--frame-w, --frame-lift) in CSS
+//   - Inner image padding to fit overlay: .frame-pad (--pad-*)
+//   - Card width (default 400px): adjust inline style here.
+
 "use client";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
@@ -8,7 +16,8 @@ import { useCart } from "@/components/cart";
 
 const FRAME_SRC = "/carouselframe.png"; // Fixed: was pointing to non-existent colortransrame.png
 
-// This is the index of the slide/product that will be highlighted
+// "center" = center (bias right on even counts), "left" / "right" = edges,
+// number = offset from center (negative left / positive right).
 const HIGHLIGHT: "left" | "center" | "right" | number = -1; // Move two positions left from center
 // examples:
 // const HIGHLIGHT = 0       // leftmost
@@ -227,7 +236,8 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
                           />
                         ) : null}
 
-                        {/* Active image inside a padded box so it sits fully inside the frame */}
+                        {/* TUNE THESE FOUR to match transparent area of the overlay.
+                            Adjust until the active image sits perfectly inside the frame. */}
                         {isActive && p.image && (
                           <div
                             className="frame-pad max-h-[400px]"
@@ -250,7 +260,8 @@ export default function FeaturedClient({ slides }: { slides: any[] }) {
                           </div>
                         )}
 
-                        {/* FRAME overlays ONLY the image area and can float upward */}
+                        {/* Overlay PNG hugs the image area. Lift with --frame-lift (neg = up).
+                            Resize overlay with --frame-w (percentage of image box width). */}
                         {isActive && (
                           <div
                             className="frame-overlay"

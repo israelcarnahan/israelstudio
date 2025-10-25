@@ -1,3 +1,9 @@
+// 🖼️ FramedCommissionForm
+// Transparent PNG is the frame; .frame-canvas defines the opening.
+// EDIT MAP:
+//   --canvas-left/top/width/height (percent of frame-img bounds)
+//   Keep within 0–100%. Mobile overrides in global.css @media block.
+
 "use client";
 import Image from "next/image";
 import { useState } from "react";
@@ -91,7 +97,8 @@ export default function FramedCommissionForm() {
     }
   }
 
-  // Fine-tune opening position here if needed:
+  // Tweak these if the opening doesn't match the visible hole in PNG.
+  // Example: move opening right by 2% → increase --canvas-left by 2%.
   const vars = {
     ["--canvas-left" as any]: "20%",
     ["--canvas-top" as any]: "20%",

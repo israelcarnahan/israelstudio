@@ -1,3 +1,8 @@
+// 🧩 ProductCard
+// Grid-card image uses object-fit: cover to fill a square.
+// For a "fit inside" effect, switch to contain (may show letterboxing).
+// "Add to Cart" uses useCart(); "View" links to product page.
+
 "use client";
 import Link from "next/link";
 import { money } from "@/lib/format";
@@ -30,6 +35,9 @@ export function ProductCard({
       <Link href={`/product/${slug}`} className="block">
         <div className="aspect-square bg-neutral-100">
           {image ? (
+            // If product thumbnails crop awkwardly, either:
+            //   a) re-crop the source image, or
+            //   b) change to object-fit: contain and accept padding.
             <img
               src={image}
               alt={title}

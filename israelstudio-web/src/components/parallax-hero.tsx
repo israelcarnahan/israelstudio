@@ -1,3 +1,13 @@
+// 🏠 ParallaxHero
+// Left column: brand (logo + buttons). Right column: TV frame + video.
+// All positioning/sizing controlled by CSS vars in global.css.
+// EDIT MAP:
+//   - Move hero block: --hero-top/left/height/gap (global.css)
+//   - Size TV in place: --tv-scale (global.css)
+//   - Video screen: --v-left/top/width/height (global.css)
+//   - Brand as a unit: transform on .brand-wrap
+//   - Tweak logo/buttons separately: --logo-*, --cta-* (global.css)
+
 "use client";
 import {
   motion,
@@ -47,7 +57,8 @@ export function ParallaxHero() {
             style={mounted ? { y, rotateX: r } : {}}
             className="will-change-transform md:col-span-1"
           >
-            {/* brand-wrap: single transform controls both logo and buttons (no duplicate knobs) */}
+            {/* Move BOTH logo & buttons together with one transform on .brand-wrap.
+                For micro-adjustments, edit --logo-x/y and --cta-x/y in :root. */}
             <div className="brand-wrap">
               <div className="mb-6">
                 <Image
@@ -77,12 +88,10 @@ export function ParallaxHero() {
             style={mounted ? { y } : {}}
             className="relative md:col-span-3"
           >
-            {/* 
-            HERO FRAME: All positioning controlled in CSS (globals.css)
-            - Frame position: .hero-frame-container
-            - Video position: .hero-frame-container .frame2-canvas
-            - To adjust: Edit the CSS values in globals.css
-          */}
+            {/* TV frame: do not set inline styles here.
+                Use global.css: --hero-top/left/height/width for block placement,
+                and --tv-scale to change size of the TV inside the hero.
+                Video screen fit: --v-* on .hero-tv.frame2 > .frame2-canvas. */}
             <div className="hero-frame-container">
               <div className="frame2 framed-shadow hero-tv">
                 <Image
@@ -96,12 +105,8 @@ export function ParallaxHero() {
                 <div className="frame2-canvas">
                   <div className="frame2-fill">
                     <div className="relative h-full w-full">
-                      {/* 
-                      VIDEO ELEMENT: The actual video content
-                      - This video fills the content area defined above
-                      - objectFit: "cover" ensures video fills the area properly
-                      - The content area (--v-* values) controls where this video appears
-                    */}
+                      {/* Video fills the defined screen area (cover). If you want "fit inside",
+                          switch to contain and adjust background color/bars. */}
                       <video
                         key={currentVideoIndex}
                         autoPlay={true}

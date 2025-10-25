@@ -1,3 +1,13 @@
+/*
+ * GLOBAL STYLES
+ * Home page quick-edit map lives in comments near each section:
+ * - HERO (TV + video aperture + brand/logo/buttons + spacing)
+ * - CAROUSEL (card size, highlight frame overlay, padded inner image)
+ * - COMMISSION FRAME (PNG + opening)
+ * - PRODUCT CARD (image fit + CTAs)
+ * Edit the marked variables under :root or the class blocks below.
+ */
+
 /* stylelint-disable at-rule-no-unknown */
 @tailwind base;
 @tailwind components;
@@ -328,6 +338,14 @@ body {
   height: auto;
 }
 
+/* === COMMISSION FRAME (PNG + OPENING) =======================
+   - Transparent PNG: .frame-img
+   - Opening: .frame-canvas
+     --canvas-left/top/width/height : % of PNG box defining the opening
+   Keep within 0–100%. If the opening drifts on mobile, check the
+   mobile overrides in @media (max-width: 640px).
+============================================================= */
+
 /* Separate framing system (not hero TV) - used for commission forms */
 .frame-canvas {
   --canvas-left: 12%;
@@ -502,6 +520,12 @@ body {
 .framed-shadow {
   filter: drop-shadow(0 18px 45px rgba(0, 0, 0, 0.18));
 }
+/* === PRODUCT CARD IMAGE FIT =================================
+   - Uses object-fit: cover for grid cards (fills square).
+   - For exact-fit crops per product, adjust source image.
+   - CTAs (Add to Cart / View) live in product-card.tsx.
+============================================================= */
+
 .video-grid {
   display: grid;
   gap: 24px;
@@ -517,6 +541,18 @@ body {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* === CAROUSEL HIGHLIGHT GUIDE ================================
+   - Card size is set inline in React (400px). Adjust there if needed.
+   - Highlight overlay PNG: .frame-overlay
+       --frame-w     : width of overlay (e.g., 110–130%)
+       --frame-lift  : raises overlay upward (neg = up; e.g., -8%)
+   - Padded inner image box: .frame-pad
+       --pad-left/top/right/bottom : tune to match transparent area of overlay
+   Best flow:
+       1) Fit the inner image with --pad-* until image sits nicely.
+       2) Lift the overlay with --frame-lift to "hug" the image.
+============================================================= */
 
 /* ===== Framed slide overlay ===== */
 .slide-img-wrap {
@@ -912,25 +948,26 @@ img {
   height: 0px; /* Increased spacing between hero and carousel */
 }
 
-/* === HERO TV — QUICK TUNING GUIDE =========================================
+/* === HERO QUICK CONTROL MAP =======================================
+   Move hero block:
+     --hero-top   : up/down (neg = up)
+     --hero-left  : left/right (percent)
+     --hero-height: reserved hero height (px)
+     --hero-gap   : spacing before next section (neg pulls up)
+   TV inside hero:
+     --tv-scale   : TV width % inside hero (keep 35–60%)
+   Video aperture inside the TV:
+     --v-left, --v-top, --v-width, --v-height   (% of .hero-tv box)
+   Brand (logo + buttons):
+     --logo-width : logo width (px)
+     --logo-x/y   : logo margins (px; neg=up/left)
+     --cta-x/y    : buttons row margins (px; neg=up/left)
+   Notes:
+     - Use brand-wrap transform to move BOTH logo + buttons together.
+     - Avoid giant negative --hero-top; it inflates reserved space math.
+================================================================== */
 
-   Change the TV's size INSIDE the hero block (without moving the block):
-   - --tv-scale (percentage width of the TV inside the hero)
-
-   Adjust where the VIDEO shows inside the TV screen (aperture):
-   - --v-left, --v-top, --v-width, --v-height (percentages of the TV box)
-
-   Scope:
-   - Global .frame2* rules apply to non-hero frames.
-   - Hero-specific rules are under .hero-tv to avoid conflicts.
-   ========================================================================= */
-
-/* ==== HERO SPACING — simple mental model ===========================
-   --hero-top   : moves the hero block up/down (neg = up)
-   --hero-height: actual height we reserve for the hero art (not 100px)
-   --hero-gap   : spacing between hero and next section
-                  (neg pulls next section up; pos adds space)
-==================================================================== */
+/* SAFE RANGES: --hero-top ~ -240..-80, --hero-height 520..680, --tv-scale 36%..56%, --hero-gap -120..+32 */
 :root {
   --hero-width: 100vw;
   --hero-height: 560px; /* pick a sane default close to reality */
@@ -947,14 +984,16 @@ img {
   --cta-y: -50px; /* buttons up/down (negative = up, positive = down) */
 }
 
-/* Reserve enough space for hero height only.
-   The upward lift (--hero-top) is handled by positioning, not height reservation. */
+/* HERO HEIGHT RESERVATION:
+   min-height = hero-height + lift (if top is negative) + positive gap only.
+   Negative gap is applied to the next section via margin-top (see below). */
 .hero-wrap {
   min-height: var(--hero-height);
 }
 
-/* Apply the overlap/push on the section after hero. If there is a named next section,
-   prefer that selector; otherwise this sibling rule is fine. */
+/* NEXT SECTION OFFSET:
+   margin-top: var(--hero-gap). Negative pulls carousel up; positive pushes it down.
+   If you move the hero a lot, adjust --hero-gap instead of adding random spacers. */
 .hero-wrap + .section-after-hero,
 .hero-wrap + #home-carousel {
   margin-top: var(--hero-gap) !important;
@@ -989,7 +1028,10 @@ img {
   - left: Move frame left/right on page
 */
 
-/* ===== BRAND WRAP: move/scale both logo and buttons together (one place to touch) ===== */
+/* BRAND BLOCK (LEFT COLUMN)
+   - To move both together, set transform on .brand-wrap (translate/scale).
+   - To size/micro-nudge separately, edit --logo-* and --cta-* in :root.
+   - Remove per-breakpoint padding hacks; rely on container and grid. */
 .brand-wrap {
   display: flex;
   flex-direction: column;
@@ -1113,7 +1155,12 @@ html {
   /* Intentional: ensure hero scale wins over global frame2 + utilities */
 }
 
-/* Hero aperture — edit `--v-left/top/width/height` **here** to fit the TV screen. These % are relative to `.hero-tv` and will scale with `--tv-scale` and `--hero-width`. */
+/* 🧩 VIDEO APERTURE INSIDE TV
+   TUNE THESE 4:
+     --v-left: % from left edge
+     --v-top: % from top edge
+     --v-width/--v-height: % size of the visible screen
+   They scale with --tv-scale automatically. */
 .hero-tv.frame2 > .frame2-canvas {
   --v-left: 15%;
   --v-top: 36%;
@@ -1131,3 +1178,21 @@ html {
   background: #000;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
+
+/* === QUICK REFERENCE ========================================
+   HERO knobs .............. :root (hero vars), .hero-wrap, .hero-tv
+   Brand (logo/buttons) .... .brand-wrap, .hero-logo, .hero-cta-row
+   Video aperture .......... .hero-tv.frame2 > .frame2-canvas (--v-*)
+   Carousel overlay ........ .frame-overlay (--frame-w, --frame-lift)
+                             .frame-pad (--pad-*)
+   Commission frame ........ .frame-canvas (--canvas-*)
+   Product cards ........... see components/product-card.tsx
+============================================================= */
+
+/* ⚠️ Potential Conflicts Found
+   - Two :root blocks: line 24 (basic colors) and line 971 (hero vars) - this is intentional separation
+   - .frame2 selectors have both global (line 458+) and hero-specific (line 1151+) - properly scoped with .hero-tv
+   - .hero-wrap has multiple selectors for carousel spacing (lines 997-1005) - intentional for different scenarios
+   - No duplicate variable definitions found - all hero vars are in single :root block
+   - Suggestion: Consider renaming :root to :hero-root for clarity, but current structure works fine
+*/
