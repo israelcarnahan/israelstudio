@@ -61,23 +61,33 @@ export default function SplashLink({ href, onClick, ...rest }: Props) {
         
         // 🛡️ NO-SPLASH ZONE CHECK
         // Respect [data-no-splash] containers (carousel viewport, etc.)
-        if ((e.target as Element)?.closest("[data-no-splash]")) return;
+        if ((e.target as Element)?.closest("[data-no-splash]")) {
+          console.log("🚫 SplashLink blocked by data-no-splash zone");
+          return;
+        }
         
         // 🖱️ DRAG DETECTION
         // Prevent splash if mouse moved > 8px between down/up (drag, not click)
         if (down.current) {
           const dx = Math.abs(e.clientX - down.current.x);
           const dy = Math.abs(e.clientY - down.current.y);
-          if (dx > 8 || dy > 8) return;
+          if (dx > 8 || dy > 8) {
+            console.log("🚫 SplashLink blocked by drag detection", { dx, dy });
+            return;
+          }
         }
         
         // 🎯 PATHNAME COMPARISON
         // Only trigger splash if destination differs from current pathname
         const dest = toUrl(href);
-        if (dest.pathname === pathname) return; // same page (hash/scroll)
+        if (dest.pathname === pathname) {
+          console.log("🚫 SplashLink blocked by same pathname", { current: pathname, dest: dest.pathname });
+          return; // same page (hash/scroll)
+        }
         
         // ✨ SPLASH TRIGGER
         // All conditions met: trigger splash and navigate
+        console.log("✨ SplashLink triggering splash", { href, pathname: dest.pathname });
         e.preventDefault();
         triggerPageSplashFromEvent(e);
         router.push(dest.pathname + dest.search + dest.hash);

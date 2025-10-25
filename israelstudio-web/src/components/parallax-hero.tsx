@@ -105,7 +105,10 @@ export function ParallaxHero() {
               </div>
               <p className="mt-5 text-lg text-neutral-600 max-w-prose"></p>
               <div className="hero-cta-row">
-                <SplashLink className="btn btn-primary flex-1 text-base" href="/shop">
+                <SplashLink
+                  className="btn btn-primary flex-1 text-base"
+                  href="/shop"
+                >
                   Shop Art
                 </SplashLink>
                 <SplashLink

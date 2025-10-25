@@ -1098,16 +1098,16 @@ img {
   z-index: 9999;
   contain: layout paint;
 }
-.page-splash:not(.is-active) { 
-  opacity: 0; 
-  visibility: hidden; 
+.page-splash:not(.is-active) {
+  opacity: 0;
+  visibility: hidden;
 }
-.page-splash.is-active { 
-  opacity: 1; 
-  visibility: visible; 
+.page-splash.is-active {
+  opacity: 1;
+  visibility: visible;
 }
-.page-splash:not(.is-active) .page-splash__img { 
-  display: none; 
+.page-splash:not(.is-active) .page-splash__img {
+  display: none;
 } /* prevents tiny dot */
 
 .page-splash__img {

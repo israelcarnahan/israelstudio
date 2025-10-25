@@ -60,8 +60,8 @@ export default function PageSplashTransition() {
 
   // 🛡️ ROUTE CHANGE CLEAR
   // Any route change -> ensure splash is hidden (prevents stuck residue)
-  useEffect(() => { 
-    setActive(false); 
+  useEffect(() => {
+    setActive(false);
   }, [pathname]);
 
   // 🎨 SPLASH RENDER
