@@ -83,7 +83,7 @@ export function ParallaxHero() {
   return (
     <section className="container py-16 parallax-wrap home-hero">
       <div className="hero-wrap">
-        <div className="grid gap-10 md:grid-cols-[420px,1fr] md:items-center">
+        <div className="grid gap-10 hero-grid md:items-start">
           <motion.div
             style={mounted ? { y, rotateX: r } : {}}
             className="will-change-transform md:col-span-1 hero-motion"
@@ -145,28 +145,17 @@ export function ParallaxHero() {
                           Alternative: "contain" shows full video (may add black bars)
                           Black-bar handling: Set background color on .frame2-canvas if using contain */}
                         <video
-                          key={currentVideoIndex}
-                          autoPlay={true}
+                          autoPlay
                           muted
                           loop
                           playsInline
+                          preload="auto"
                           className="hero-video"
                           style={{
-                            // VIDEO STYLING: Just basic video properties
-                            // - The content area above (--v-* values) controls positioning and sizing
-                            // - This only handles video-specific styling
                             objectFit: "cover",
                           }}
-                          onLoadStart={() => {
-                            // Ensure smooth transitions
-                          }}
-                        >
-                          <source
-                            src={`/videos/${videos[currentVideoIndex]}`}
-                            type="video/mp4"
-                          />
-                          Your browser does not support the video tag.
-                        </video>
+                          src={`/videos/${videos[currentVideoIndex]}`}
+                        />
                       </div>
                     </div>
                   </div>

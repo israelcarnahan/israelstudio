@@ -579,20 +579,6 @@ body {
   height: auto;
 }
 
-/* Allow vertical overflow (string), but clip horizontal overflow to prevent page widening */
-/* NOTE: embla-viewport-visible appears multiple times; consolidate in cleanup pass. */
-.embla-viewport-visible {
-  overflow-x: clip;
-  overflow-y: visible;
-}
-
-/* Fallback for browsers without overflow: clip support */
-@supports not (overflow: clip) {
-  .embla-viewport-visible {
-    overflow-x: hidden;
-  }
-}
-
 /* Extra safety: an outer guard that also clips X */
 .carousel-guard {
   overflow-x: clip;
@@ -966,7 +952,7 @@ img {
 
 /* HERO BREAKPOINT TOKENS - ROOT LEVEL */
 :root {
-  /* Hero height tokens */
+  /* Hero height tokens - (height = width × 1.5 from aspect) */
   --hero-height-sm: 520px;
   --hero-height-md: 560px;
   --hero-height-lg: 640px;
@@ -974,22 +960,20 @@ img {
   /* TV width tokens */
   --hero-tvw-sm: 420px;
   --hero-tvw-md: 46vw;
-  --hero-tvw-lg: 900px;
+  --hero-tvw-lg: 700px;
 }
 
 /* HERO VARIABLES - SCOPED UNDER .home-hero */
 .home-hero {
-  /* 1) Overall reserved space for the hero (breakpoint tokens) */
-  --hero-height: var(--hero-height-md);
-
-  /* 2) TV width (breakpoint tokens) */
-  --hero-tv-width: var(--hero-tvw-md);
+  /* Core size controls (direct) */
+  --tv-width: 860px; /* TV frame width; height derives from aspect-ratio */
+  --hero-tv-width: var(--tv-width); /* Alias for existing rules */
 
   /* 3) Vertical nudge: start at zero. Prefer using gap, not big offsets. */
   --hero-offset-y: 0px;
 
   /* 4) Space before the next section (negative pulls carousel up) */
-  --hero-next-gap: -220px;
+  --hero-next-gap: -20px;
 
   /* 5) Brand vertical fine-tune if needed */
   --brand-offset-y: 0px;
@@ -1002,10 +986,14 @@ img {
 
   /* Brand controls */
   --logo-width: 360px;
-  --logo-x: 135px;
+  --logo-x: 0px;
   --logo-y: 0px;
-  --cta-x: 135px;
+  --cta-x: 0px;
   --cta-y: -50px;
+  /* Brand column width for grid layout (md+). Adjusts left column size. */
+  --brand-col: clamp(340px, 26vw, 500px);
+  /* Top padding space below header */
+  --hero-pad-top: 0px;
 }
 
 /* RESPONSIVE BREAKPOINT OVERRIDES */
@@ -1016,39 +1004,21 @@ img {
   }
 }
 
-@media (min-width: 1200px) {
-  .home-hero {
-    --hero-height: var(--hero-height-lg);
-    --hero-tv-width: var(--hero-tvw-lg);
-  }
-}
+/* Removed breakpoint overrides and clamp mode; use direct variables */
 
-/* ALTERNATIVE CLAMP MODE (disabled by default) */
-.home-hero[data-hero-size="clamp"] {
-  --hero-height: clamp(520px, 52vw, 680px);
-  --hero-tv-width: clamp(420px, 46vw, 900px);
-}
-
-/* HERO HEIGHT RESERVATION - GRID-NATIVE */
+/* HERO SPACING - GRID-NATIVE */
 .home-hero .hero-wrap {
-  min-height: var(--hero-height);
+  padding-top: var(--hero-pad-top, 0px);
 }
 
 /* NEXT SECTION OFFSET - ROBUST SPACING (not adjacency-dependent) */
 /* Target carousel directly by ID - works regardless of DOM structure */
 #home-carousel {
-  margin-top: var(--hero-next-gap) !important;
+  margin-top: var(--hero-next-gap);
 }
 
 /* Support general sibling selector as backup */
-.home-hero ~ #home-carousel {
-  margin-top: var(--hero-next-gap) !important;
-}
-
-/* Support any section that follows hero */
-.home-hero ~ .section-after-hero {
-  margin-top: var(--hero-next-gap) !important;
-}
+/* Removed sibling fallbacks to avoid brittle adjacency coupling */
 
 /* =========================================================
    HERO GRID-NATIVE LAYOUT SYSTEM
@@ -1068,6 +1038,16 @@ img {
   transform: translateY(var(--hero-offset-y, 0px));
   will-change: transform;
   overflow: visible;
+}
+
+/* HERO GRID COLUMNS (CSS-owned; avoids brittle arbitrary values) */
+.home-hero .hero-grid {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) {
+  .home-hero .hero-grid {
+    grid-template-columns: minmax(320px, var(--brand-col, 420px)) 1fr;
+  }
 }
 
 /* HERO MOTION WRAPPER - FRAMER MOTION CONTROL */
@@ -1102,11 +1082,11 @@ img {
 
 /* VIDEO APERTURE INSIDE TV */
 .home-hero .hero-tv.frame2 > .frame2-canvas {
-  position: absolute !important;
-  left: var(--v-left) !important;
-  top: var(--v-top) !important;
-  width: var(--v-width) !important;
-  height: var(--v-height) !important;
+  position: absolute;
+  left: var(--v-left);
+  top: var(--v-top);
+  width: var(--v-width);
+  height: var(--v-height);
   overflow: hidden;
   background: #000;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
