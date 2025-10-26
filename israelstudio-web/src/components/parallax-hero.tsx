@@ -126,73 +126,70 @@ export function ParallaxHero() {
                 - .hero-layout: receives --hero-offset-y transform (CSS-controlled)
                 - .hero-motion: receives Framer Motion transforms (JS-controlled)
                 - No conflicts between CSS and JS transforms */}
-            <motion.div
-              style={mounted ? { y } : {}}
-              className="hero-motion"
-            >
+            <motion.div style={mounted ? { y } : {}} className="hero-motion">
               <div className="hero-frame-container">
-              <div className="frame2 framed-shadow hero-tv">
-                <Image
-                  src="/tvheroframe.png"
-                  alt=""
-                  width={1400}
-                  height={1000}
-                  className="frame2-img"
-                  priority
-                />
-                <div className="frame2-canvas">
-                  <div className="frame2-fill">
-                    <div className="relative h-full w-full">
-                      {/* 🎬 VIDEO ELEMENT
+                <div className="frame2 framed-shadow hero-tv">
+                  <Image
+                    src="/tvheroframe.png"
+                    alt=""
+                    width={1400}
+                    height={1000}
+                    className="frame2-img"
+                    priority
+                  />
+                  <div className="frame2-canvas">
+                    <div className="frame2-fill">
+                      <div className="relative h-full w-full">
+                        {/* 🎬 VIDEO ELEMENT
                           objectFit: "cover" fills screen area (crops to fit)
                           Alternative: "contain" shows full video (may add black bars)
                           Black-bar handling: Set background color on .frame2-canvas if using contain */}
-                      <video
-                        key={currentVideoIndex}
-                        autoPlay={true}
-                        muted
-                        loop
-                        playsInline
-                        className="hero-video"
-                        style={{
-                          // VIDEO STYLING: Just basic video properties
-                          // - The content area above (--v-* values) controls positioning and sizing
-                          // - This only handles video-specific styling
-                          objectFit: "cover",
-                        }}
-                        onLoadStart={() => {
-                          // Ensure smooth transitions
-                        }}
-                      >
-                        <source
-                          src={`/videos/${videos[currentVideoIndex]}`}
-                          type="video/mp4"
-                        />
-                        Your browser does not support the video tag.
-                      </video>
+                        <video
+                          key={currentVideoIndex}
+                          autoPlay={true}
+                          muted
+                          loop
+                          playsInline
+                          className="hero-video"
+                          style={{
+                            // VIDEO STYLING: Just basic video properties
+                            // - The content area above (--v-* values) controls positioning and sizing
+                            // - This only handles video-specific styling
+                            objectFit: "cover",
+                          }}
+                          onLoadStart={() => {
+                            // Ensure smooth transitions
+                          }}
+                        >
+                          <source
+                            src={`/videos/${videos[currentVideoIndex]}`}
+                            type="video/mp4"
+                          />
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* 🎯 VIDEO INDICATOR DOTS
+              {/* 🎯 VIDEO INDICATOR DOTS
                 Style extensions: Add hover animations, custom colors, or size variants
                 Animation: Current uses scale-125 for active state
                 Accessibility: aria-label provides screen reader context */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-              {videos.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentVideoIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    index === currentVideoIndex
-                      ? "bg-white scale-125"
-                      : "bg-white/50 hover:bg-white/75"
-                  }`}
-                  aria-label={`Go to video ${index + 1}`}
-                />
-              ))}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                {videos.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentVideoIndex(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === currentVideoIndex
+                        ? "bg-white scale-125"
+                        : "bg-white/50 hover:bg-white/75"
+                    }`}
+                    aria-label={`Go to video ${index + 1}`}
+                  />
+                ))}
               </div>
             </motion.div>
           </div>
