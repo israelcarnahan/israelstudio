@@ -90,12 +90,14 @@
 ## Cleanup Completed ✅
 
 ### Duplicate CSS Rules Consolidated
+
 - **`.slide-img-wrap`**: Removed duplicate definition, kept canonical version
 - **`.embla-viewport-visible`**: Consolidated multiple definitions into single block
 - **`@keyframes wiggle`**: Renamed second definition to `wiggle-enhanced` to avoid conflict
 - **Updated references**: `.btn-sparkle:hover` now uses `wiggle-enhanced`
 
 ### Remaining Duplicates (Intentionally Preserved)
+
 - **`.slide-img-wrap`**: Still appears in carousel section (different context)
 - **`.embla-viewport-visible`**: Still appears in carousel section (different context)
 - **Multiple wiggle variants**: `wiggle-ghost`, `wiggle-chip`, `wiggle-chip-ghost` (different purposes)
