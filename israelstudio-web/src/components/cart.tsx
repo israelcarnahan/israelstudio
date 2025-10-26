@@ -1,7 +1,10 @@
 "use client";
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useMemo, useState, useEffect } from "react";
+import { clampQty } from "@/lib/stockPolicy";
+import { loadCart, saveCart } from "@/lib/storage";
 
 export type CartLine = {
+  id: string; // Unique identifier for cart line
   slug: string;
   name: string;
   amountCents: number;
@@ -10,11 +13,16 @@ export type CartLine = {
   category?: string;
 };
 
+type CartLineInput = Omit<CartLine, 'id'>;
+
 type CartCtx = {
   lines: CartLine[];
-  add: (l: CartLine) => void;
+  add: (l: CartLineInput) => void;
   remove: (slug: string) => void;
   clear: () => void;
+  setQuantity: (lineId: string, quantity: number) => Promise<void>;
+  increment: (lineId: string) => Promise<void>;
+  decrement: (lineId: string) => Promise<void>;
   totalCents: number;
   checkout: () => Promise<void>;
 };
@@ -23,6 +31,21 @@ const Ctx = createContext<CartCtx | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [lines, setLines] = useState<CartLine[]>([]);
+
+  // Hydrate cart from localStorage on mount
+  useEffect(() => {
+    const savedCart = loadCart();
+    if (savedCart.length > 0) {
+      setLines(savedCart);
+    }
+  }, []);
+
+  // Persist cart to localStorage whenever lines change
+  useEffect(() => {
+    if (lines.length > 0) {
+      saveCart(lines);
+    }
+  }, [lines]);
 
   const totalCents = useMemo(
     () => lines.reduce((sum, l) => sum + l.amountCents * l.quantity, 0),
@@ -37,7 +60,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           p.slug === l.slug ? { ...p, quantity: p.quantity + l.quantity } : p
         );
       }
-      return [...prev, l];
+      // Generate unique ID for new cart line
+      const newLine = { ...l, id: `${l.slug}-${Date.now()}-${Math.random()}` };
+      return [...prev, newLine];
     });
   };
 
@@ -46,6 +71,31 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const clear = () => setLines([]);
+
+  const setQuantity: CartCtx["setQuantity"] = async (lineId, quantity) => {
+    const line = lines.find(l => l.id === lineId);
+    if (!line) return;
+
+    const clampedQty = await clampQty(line.slug, quantity);
+    
+    setLines((prev) =>
+      prev.map((l) =>
+        l.id === lineId ? { ...l, quantity: clampedQty } : l
+      )
+    );
+  };
+
+  const increment: CartCtx["increment"] = async (lineId) => {
+    const line = lines.find(l => l.id === lineId);
+    if (!line) return;
+    await setQuantity(lineId, line.quantity + 1);
+  };
+
+  const decrement: CartCtx["decrement"] = async (lineId) => {
+    const line = lines.find(l => l.id === lineId);
+    if (!line) return;
+    await setQuantity(lineId, line.quantity - 1);
+  };
 
   const checkout = async () => {
     const res = await fetch("/api/checkout", {
@@ -59,7 +109,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <Ctx.Provider value={{ lines, add, remove, clear, totalCents, checkout }}>
+    <Ctx.Provider value={{ lines, add, remove, clear, setQuantity, increment, decrement, totalCents, checkout }}>
       {children}
     </Ctx.Provider>
   );
