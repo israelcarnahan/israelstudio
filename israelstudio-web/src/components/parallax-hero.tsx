@@ -81,12 +81,12 @@ export function ParallaxHero() {
   }, [mounted, videos.length]);
 
   return (
-    <section className="container py-16 parallax-wrap">
+    <section className="container py-16 parallax-wrap home-hero">
       <div className="hero-wrap">
         <div className="grid gap-10 md:grid-cols-[420px,1fr] md:items-center">
           <motion.div
             style={mounted ? { y, rotateX: r } : {}}
-            className="will-change-transform md:col-span-1"
+            className="will-change-transform md:col-span-1 hero-motion"
           >
             {/* 🎨 BRAND WRAP (Logo + Buttons)
                 Controls: --logo-* and --cta-* vars in globals.css :root
@@ -122,12 +122,12 @@ export function ParallaxHero() {
           </motion.div>
           <motion.div
             style={mounted ? { y } : {}}
-            className="relative md:col-span-3"
+            className="relative md:col-span-3 hero-motion"
           >
             {/* 📺 HERO FRAME CONTAINER
-                Controls: --hero-top/left/height/width and --tv-scale in globals.css :root
-                Scoping: All hero vars live in global :root (not scoped to .home-hero)
-                Video screen: --v-* vars on .hero-tv.frame2 > .frame2-canvas */}
+                PARALLAX GUARD CLAUSE: Motion effects only apply visual transforms
+                Layout positioning handled by CSS grid and .home-hero scoping
+                No layout-affecting properties (top, left, width, margin) in motion styles */}
             <div className="hero-frame-container">
               <div className="frame2 framed-shadow hero-tv">
                 <Image
