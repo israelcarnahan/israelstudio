@@ -555,7 +555,6 @@ body {
 ============================================================= */
 
 /* ===== Framed slide overlay ===== */
-/* NOTE: slide-img-wrap appears again below in carousel section; keep a single definition long-term. */
 .slide-img-wrap {
   position: relative;
   overflow: visible; /* allow frame to escape upward */
@@ -894,12 +893,6 @@ body {
   transform: translateZ(0); /* Force hardware acceleration */
 }
 
-/* Allow painting to escape for the wire bleed */
-.embla-viewport-visible {
-  will-change: transform;
-  contain: none;
-}
-
 .slide-img {
   will-change: opacity;
   transform: translateZ(0);
@@ -923,12 +916,15 @@ img {
   }
 }
 
-/* Embla viewport: clip X, allow Y */
-/* NOTE: duplicate; consolidate in cleanup pass */
+/* Embla viewport: clip X, allow Y, optimize performance */
 .embla-viewport-visible {
   overflow-y: visible;
   overflow-x: clip;
+  will-change: transform;
+  contain: none;
 }
+
+/* Fallback for browsers without overflow: clip support */
 @supports not (overflow: clip) {
   .embla-viewport-visible {
     overflow-x: hidden;
@@ -975,13 +971,13 @@ img {
   --hero-offset-y: -720px; /* TV vertical fine-tuning (replaces legacy top:) */
   --hero-next-gap: -450px; /* Gap to next section */
   --brand-offset-y: 0px; /* Brand vertical fine-tuning */
-  
+
   /* Video aperture controls */
   --v-left: 15%;
   --v-top: 36%;
   --v-width: 56%;
   --v-height: 30%;
-  
+
   /* Brand controls */
   --logo-width: 360px;
   --logo-x: 135px;
