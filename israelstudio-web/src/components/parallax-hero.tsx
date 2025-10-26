@@ -120,15 +120,17 @@ export function ParallaxHero() {
               </div>
             </div>
           </motion.div>
-          <motion.div
-            style={mounted ? { y } : {}}
-            className="relative md:col-span-3 hero-motion"
-          >
+          <div className="hero-layout md:col-span-3">
             {/* 📺 HERO FRAME CONTAINER
-                PARALLAX GUARD CLAUSE: Motion effects only apply visual transforms
-                Layout positioning handled by CSS grid and .home-hero scoping
-                No layout-affecting properties (top, left, width, margin) in motion styles */}
-            <div className="hero-frame-container">
+                LAYOUT VS MOTION SPLIT: 
+                - .hero-layout: receives --hero-offset-y transform (CSS-controlled)
+                - .hero-motion: receives Framer Motion transforms (JS-controlled)
+                - No conflicts between CSS and JS transforms */}
+            <motion.div
+              style={mounted ? { y } : {}}
+              className="hero-motion"
+            >
+              <div className="hero-frame-container">
               <div className="frame2 framed-shadow hero-tv">
                 <Image
                   src="/tvheroframe.png"
@@ -191,8 +193,9 @@ export function ParallaxHero() {
                   aria-label={`Go to video ${index + 1}`}
                 />
               ))}
-            </div>
-          </motion.div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

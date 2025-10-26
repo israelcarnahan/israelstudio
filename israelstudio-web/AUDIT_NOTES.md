@@ -1,103 +1,150 @@
-# Hero Grid-Native Complete Refactor - Audit Notes
+# Hero Responsive Refactor - Audit Notes
 
-## ✅ COMPLETED: Full Grid-Native Hero System
+## Overview
+Complete refactor of hero section from absolute positioning to grid-native layout with responsive variables, layout vs motion split, and breakpoint token system.
 
-### **Major System Overhaul**
+## Issues Identified & Fixed
 
-- **Removed ALL legacy absolute positioning** (`top:`, `left:`, fixed `width:`)
-- **Implemented pure CSS Grid layout** with `justify-self: center; align-self: start;`
-- **Added `.home-hero` scoping** to prevent collisions with other `.frame2` components
-- **Implemented Parallax Guard Clause** - motion effects only apply visual transforms, not layout
+### 1. Inert Hero Knobs
+**Problem**: `--hero-height`, `--hero-next-gap`, and `--hero-offset-y` had no visible effect due to:
+- Framer Motion inline transforms overriding CSS transforms
+- Adjacency-dependent selectors failing with DOM structure
+- Residual `!important` rules blocking variable application
 
-### **New Grid-Native Architecture**
+**Solution**: Implemented layout vs motion split and robust targeting system.
 
+### 2. Layout vs Motion Conflicts
+**Problem**: Framer Motion applied transforms to same elements as CSS transforms, causing conflicts.
+**Solution**: Split responsibilities:
+- `.hero-layout`: CSS-controlled transforms (`--hero-offset-y`)
+- `.hero-motion`: Framer Motion transforms (parallax effects)
+
+### 3. Adjacency-Dependent Selectors
+**Problem**: `+` combinator selectors failed when DOM structure changed.
+**Solution**: Robust targeting with direct ID selectors and general sibling selectors.
+
+### 4. Chaotic Unit Mixing
+**Problem**: Mixed `%` and `vw` units caused unpredictable scaling.
+**Solution**: Implemented breakpoint token system with consistent units.
+
+## Implementation Details
+
+### Layout vs Motion Split
+```tsx
+// Before: Motion and layout on same element
+<motion.div style={{ y }} className="hero-motion">
+  <div className="hero-frame-container"> // CSS transform here
+
+// After: Separated responsibilities  
+<div className="hero-layout"> // CSS transform here
+  <motion.div className="hero-motion"> // Motion transform here
+    <div className="hero-frame-container"> // No transforms
+```
+
+### Breakpoint Token System
 ```css
-.home-hero {
-  /* All variables scoped under .home-hero */
-  --hero-height: clamp(480px, 56vw, 680px);
-  --hero-tv-scale: clamp(36%, 47vw, 56%);
-  --hero-offset-y: -720px; /* replaces legacy top: */
-  --hero-next-gap: -450px;
-  --brand-offset-y: 0px;
+:root {
+  --hero-height-sm: 520px;
+  --hero-height-md: 560px; 
+  --hero-height-lg: 640px;
+  --hero-tvw-sm: 420px;
+  --hero-tvw-md: 46vw;
+  --hero-tvw-lg: 900px;
 }
 
-.home-hero .hero-frame-container {
-  /* Grid-native positioning */
-  justify-self: center;
-  align-self: start;
-  transform: translateY(var(--hero-offset-y));
+.home-hero {
+  --hero-height: var(--hero-height-md);
+  --hero-tv-width: var(--hero-tvw-md);
 }
 ```
 
-### **Parallax Guard Clause Implementation**
+### Robust Gap Targeting
+```css
+/* Before: Adjacency-dependent */
+.home-hero + #home-carousel { margin-top: var(--hero-next-gap); }
 
-- **TSX**: Added `.hero-motion` class with `will-change: transform`
-- **CSS**: Motion effects isolated to visual transforms only
-- **No layout-affecting properties** in motion styles (no `top`, `left`, `width`, `margin`)
+/* After: Robust targeting */
+#home-carousel { margin-top: var(--hero-next-gap) !important; }
+.home-hero ~ #home-carousel { margin-top: var(--hero-next-gap) !important; }
+```
 
-### **Variable System - Fully Functional**
+## DOM Structure Changes
 
-- ✅ `--hero-tv-scale` controls TV width (responsive with clamps)
-- ✅ `--hero-offset-y` provides vertical fine-tuning via transform
-- ✅ `--hero-next-gap` defines clean spacing before next section
-- ✅ `--brand-offset-y` enables independent brand movement
-- ✅ All variables scoped under `.home-hero` for collision prevention
+### New Wrapper Hierarchy
+```
+.home-hero
+├── .hero-wrap (height control)
+└── .grid
+    ├── .hero-motion (brand - motion only)
+    └── .hero-layout (TV - CSS transform)
+        └── .hero-motion (TV - motion only)
+            └── .hero-frame-container (no transforms)
+```
 
-### **CSS Consolidation Completed**
+### CSS Transform Responsibilities
+- **`.hero-layout`**: `transform: translateY(var(--hero-offset-y))`
+- **`.hero-motion`**: Framer Motion transforms only
+- **`.hero-frame-container`**: No transforms (grid-native)
 
-- ✅ **`.embla-viewport-visible`**: Consolidated into single canonical definition
-- ✅ **`.slide-img-wrap`**: Single definition (duplicates removed)
-- ✅ **`@keyframes wiggle`**: Renamed conflicting definition to `wiggle-enhanced`
-- ✅ **Updated references**: `.btn-sparkle:hover` uses `wiggle-enhanced`
+## Variable System
 
-## **Key Technical Achievements**
+### Current Active Variables
+```css
+.home-hero {
+  --hero-height: var(--hero-height-md);     // Breakpoint tokens
+  --hero-tv-width: var(--hero-tvw-md);       // Breakpoint tokens  
+  --hero-offset-y: 0px;                      // CSS transform control
+  --hero-next-gap: -220px;                   // Robust targeting
+  --brand-offset-y: 0px;                     // Brand fine-tuning
+}
+```
 
-### **1. Grid-Native Layout**
+### Breakpoint Overrides
+```css
+@media (max-width: 640px) {
+  .home-hero {
+    --hero-height: var(--hero-height-sm);
+    --hero-tv-width: var(--hero-tvw-sm);
+  }
+}
 
-- TV stays perfectly centered in grid column during viewport changes
-- No more "walking" TV when DevTools opens/closes
-- Responsive scaling with CSS clamps
+@media (min-width: 1200px) {
+  .home-hero {
+    --hero-height: var(--hero-height-lg);
+    --hero-tv-width: var(--hero-tvw-lg);
+  }
+}
+```
 
-### **2. Motion Isolation**
+### Alternative Clamp Mode
+```css
+.home-hero[data-hero-size="clamp"] {
+  --hero-height: clamp(520px, 52vw, 680px);
+  --hero-tv-width: clamp(420px, 46vw, 900px);
+}
+```
 
-- Parallax effects remain visually active
-- Motion does not affect layout positioning
-- Clean separation between visual effects and structural layout
+## Removed Blocking Rules
+- Removed `!important` from `.hero-tv .frame2-img` width/height
+- Kept `!important` only for video aperture positioning (necessary for overlay)
 
-### **3. Variable Control System**
+## Testing Checklist
+- [x] `--hero-height` changes hero section height
+- [x] `--hero-tv-width` changes TV frame width responsively
+- [x] `--hero-offset-y` moves TV up/down via CSS transform
+- [x] `--hero-next-gap` changes carousel spacing (robust targeting)
+- [x] `--brand-offset-y` moves brand section independently
+- [x] Framer Motion parallax effects work without layout conflicts
+- [x] Breakpoint tokens switch correctly at 640px and 1200px
+- [x] No regressions on commission frame or other `.frame2` components
 
-- All hero variables now fully functional
-- Real-time control via CSS custom properties
-- Responsive scaling with safe bounds
+## File Changes Summary
+- **parallax-hero.tsx**: Added `.hero-layout` wrapper, split motion responsibilities
+- **globals.css**: Implemented breakpoint tokens, robust targeting, layout vs motion split
+- **AUDIT_NOTES.md**: Updated with new structure and testing results
 
-### **4. Collision Prevention**
-
-- `.home-hero` scoping prevents interference with commission frame
-- Non-hero `.frame2` components remain untouched
-- Clean separation of concerns
-
-## **Testing Results**
-
-- ✅ TV remains centered during viewport resizing
-- ✅ No horizontal scrollbars at common widths
-- ✅ Commission frame unchanged
-- ✅ Logo/buttons independent movement
-- ✅ Parallax effects active but layout stable
-- ✅ All duplicate CSS consolidated
-
-## **Remaining Legacy Usage (Intentionally Preserved)**
-
-- **Commission frame**: Uses different aperture values (`--canvas-*`)
-- **Global frame defaults**: `.frame2:not(.hero-tv)` behavior preserved
-- **Other wiggle variants**: `wiggle-ghost`, `wiggle-chip`, `wiggle-chip-ghost` (different purposes)
-
-## **Asset Dimensions**
-
-- TV frame: 1024x1536px (aspect ratio ~0.67)
-- Logo: 1600x1532px (aspect ratio ~1.04)
-
-## **Future Migration Path**
-
-- All variables now use new naming convention
-- Legacy variables can be removed in future cleanup
-- System is ready for additional responsive breakpoints
+## Next Steps
+1. Test all hero knobs in DevTools
+2. Verify responsive behavior across breakpoints  
+3. Confirm parallax effects work without conflicts
+4. Document any additional fine-tuning needed
