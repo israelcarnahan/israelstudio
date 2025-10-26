@@ -986,13 +986,26 @@ img {
 /* SAFE RANGES: --hero-top ~ -240..-80, --hero-height 520..680, --tv-scale 36%..56%, --hero-gap -120..+32 */
 :root {
   --hero-width: 100vw;
-  --hero-height: 560px; /* pick a sane default close to reality */
+  --hero-height: clamp(
+    480px,
+    56vw,
+    680px
+  ); /* responsive height with safe bounds */
   --hero-top: -720px; /* modest lift; avoid -750px cliffs */
   --hero-left: 23%; /* move left/right */
   --hero-gap: -450px; /* pull carousel up to reduce white space */
   /* Rename idea (future, docs only): --hero-gap → --hero-next-gap (reads as "gap to next section"). */
-  --tv-scale: 47%; /* inner TV scale inside the hero block */
+  --tv-scale: clamp(36%, 47vw, 56%); /* responsive TV scale with safe bounds */
   /* Rename idea (future, docs only): --tv-scale → --hero-tv-scale for intent clarity. */
+
+  /* NEW VARIABLE ALIASES WITH FALLBACKS (no breaking changes) */
+  --hero-tv-scale: var(--tv-scale, 47%); /* TV scale within hero */
+  --hero-next-gap: var(--hero-gap, -450px); /* Gap to next section */
+  --hero-offset-y: var(
+    --hero-top,
+    0px
+  ); /* Vertical fine-tuning (replaces top:) */
+  --brand-offset-y: 0px; /* Brand vertical fine-tuning */
 
   /* Individual logo/button controls - adjust these directly */
   --logo-width: 360px; /* logo size */
@@ -1016,16 +1029,16 @@ img {
 }
 
 /* NEXT SECTION OFFSET:
-   margin-top: var(--hero-gap). Negative pulls carousel up; positive pushes it down.
-   If you move the hero a lot, adjust --hero-gap instead of adding random spacers. */
+   margin-top: var(--hero-next-gap). Negative pulls carousel up; positive pushes it down.
+   If you move the hero a lot, adjust --hero-next-gap instead of adding random spacers. */
 .hero-wrap + .section-after-hero,
 .hero-wrap + #home-carousel {
-  margin-top: var(--hero-gap) !important;
+  margin-top: var(--hero-next-gap) !important;
 }
 
 /* Alternative selector in case the sibling selector isn't working */
 #home-carousel {
-  margin-top: var(--hero-gap) !important;
+  margin-top: var(--hero-next-gap) !important;
 }
 
 /* =========================================================
@@ -1062,6 +1075,8 @@ img {
   align-items: flex-start; /* left align by default */
   gap: 14px;
   transform-origin: top left;
+  /* Independent vertical movement */
+  transform: translateY(var(--brand-offset-y, 0px));
   /* default: no transform. Add one line inline when needed: style={{ transform: 'translateX(8px) translateY(0) scale(1.0)' }} */
 }
 
@@ -1194,23 +1209,25 @@ header.site,
 
 /* === HERO FINAL OVERRIDES (must be last to win cascade) === */
 
-/* Hero frame container with height cap */
+/* Hero frame container - now grid-native */
 .hero-frame-container {
-  position: relative !important;
-  width: var(--hero-width) !important;
-  height: var(--hero-height) !important;
-  top: var(--hero-top) !important;
-  left: var(--hero-left) !important;
-  margin: 0 auto !important;
+  position: relative;
+  width: 100%;
   max-width: 1600px;
+  justify-self: center;
+  align-self: start;
+  /* Fine-tuning with transform instead of absolute positioning */
+  transform: translateY(var(--hero-offset-y, 0px));
   overflow: visible;
 }
 
 /* Hero TV scale override */
 .hero-tv.frame2 {
-  width: var(--tv-scale, 66%) !important;
-  max-width: none !important;
+  width: var(--hero-tv-scale, 47%) !important;
+  max-width: min(100%, 1000px) !important;
   margin-inline: auto;
+  /* Aspect ratio hint for stability (1024x1536 ≈ 2:3) */
+  aspect-ratio: 2 / 3;
   /* Intentional: ensure hero scale wins over global frame2 + utilities */
 }
 
@@ -1240,15 +1257,34 @@ header.site,
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
 
-/* === QUICK REFERENCE ========================================
-   HERO knobs .............. :root (hero vars), .hero-wrap, .hero-tv
-   Brand (logo/buttons) .... .brand-wrap, .hero-logo, .hero-cta-row
-   Video aperture .......... .hero-tv.frame2 > .frame2-canvas (--v-*)
+/* === HERO DEV HELPER - QUICK REFERENCE ========================================
+   
+   🎛️ MAIN HERO KNOBS (in :root):
+   --hero-height: clamp(480px, 56vw, 680px)     // Hero section height
+   --hero-next-gap: var(--hero-gap, -450px)     // Gap to next section
+   --hero-tv-scale: var(--tv-scale, 47%)        // TV size within hero
+   --hero-offset-y: var(--hero-top, 0px)        // TV vertical fine-tuning
+   --brand-offset-y: 0px                        // Brand vertical fine-tuning
+   
+   📺 VIDEO APERTURE (on .hero-tv.frame2 > .frame2-canvas):
+   --v-left: 15%                                 // Video left position
+   --v-top: 36%                                  // Video top position  
+   --v-width: 56%                                // Video width
+   --v-height: 30%                               // Video height
+   
+   🎨 BRAND CONTROLS (logo + buttons):
+   --logo-width: 360px                          // Logo size
+   --logo-x: 135px, --logo-y: 0px               // Logo margins
+   --cta-x: 135px, --cta-y: -50px               // Button margins
+   
+   📋 OTHER COMPONENTS:
    Carousel overlay ........ .frame-overlay (--frame-w, --frame-lift)
-                             .frame-pad (--pad-*)
    Commission frame ........ .frame-canvas (--canvas-*)
    Product cards ........... see components/product-card.tsx
-============================================================= */
+   
+   ⚠️ SAFE RANGES: --hero-height 480-680px, --tv-scale 36-56%, --hero-gap -120..+32
+   ⚠️ CURRENT VALUES: Intentionally outside safe ranges for current layout
+================================================================================ */
 
 /* ⚠️ Potential Conflicts / Clarity Notes
    - :root blocks:
