@@ -2,7 +2,7 @@
 import { useCart } from "@/components/cart";
 import { money } from "@/lib/format";
 import Image from "next/image";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 // Debounced input handler for quantity changes
 function useDebouncedCallback(callback: (value: number) => void, delay: number) {
@@ -33,6 +33,11 @@ function QuantityControls({
 }) {
   const [inputValue, setInputValue] = useState(currentQty.toString());
   const debouncedSetQuantity = useDebouncedCallback(onSetQuantity, 200);
+
+  // Sync input value with cart state when currentQty changes
+  useEffect(() => {
+    setInputValue(currentQty.toString());
+  }, [currentQty]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
