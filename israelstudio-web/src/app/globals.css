@@ -966,18 +966,28 @@ img {
 
 /* HERO VARIABLES - SCOPED UNDER .home-hero */
 .home-hero {
-  --hero-height: clamp(480px, 56vw, 680px); /* responsive height */
-  --hero-tv-scale: clamp(36%, 47vw, 56%); /* responsive TV scale */
-  --hero-offset-y: -720px; /* TV vertical fine-tuning (replaces legacy top:) */
-  --hero-next-gap: -450px; /* Gap to next section */
-  --brand-offset-y: 0px; /* Brand vertical fine-tuning */
+  /* 1) Overall reserved space for the hero */
+  --hero-height: clamp(520px, 52vw, 680px);
 
+  /* 2) Keep the TV's width fluid with safe guardrails.
+        We'll set the *element* to use this var directly. */
+  --hero-tv-width: clamp(420px, 46vw, 900px);
+
+  /* 3) Vertical nudge: start at zero. Prefer using gap, not big offsets. */
+  --hero-offset-y: 0px;
+
+  /* 4) Space before the next section (negative pulls carousel up) */
+  --hero-next-gap: -260px;
+
+  /* 5) Brand vertical fine-tune if needed */
+  --brand-offset-y: 0px;
+  
   /* Video aperture controls */
   --v-left: 15%;
   --v-top: 36%;
   --v-width: 56%;
   --v-height: 30%;
-
+  
   /* Brand controls */
   --logo-width: 360px;
   --logo-x: 135px;
@@ -1023,8 +1033,8 @@ img {
 
 /* HERO TV - RESPONSIVE SCALING */
 .home-hero .hero-tv.frame2 {
-  width: var(--hero-tv-scale, 47%) !important;
-  max-width: min(100%, 1000px) !important;
+  width: var(--hero-tv-width);
+  max-width: 100%;
   margin-inline: auto;
   /* Aspect ratio hint for stability (1024x1536 ≈ 2:3) */
   aspect-ratio: 2 / 3;
@@ -1194,11 +1204,11 @@ header.site,
 /* === HERO DEV HELPER - QUICK REFERENCE ========================================
    
    🎛️ MAIN HERO KNOBS (scoped under .home-hero):
-   --hero-height: clamp(480px, 56vw, 680px)     // Hero section height
-   --hero-tv-scale: clamp(36%, 47vw, 56%)        // TV size within hero (responsive)
-   --hero-offset-y: -720px                       // TV vertical fine-tuning
-   --hero-next-gap: -450px                       // Gap to next section
-   --brand-offset-y: 0px                         // Brand vertical fine-tuning
+   --hero-height: clamp(520px, 52vw, 680px)     // Hero section height
+   --hero-tv-width: clamp(420px, 46vw, 900px)   // TV width (px/vw/px for stability)
+   --hero-offset-y: 0px                         // TV vertical fine-tuning
+   --hero-next-gap: -260px                      // Gap to next section
+   --brand-offset-y: 0px                        // Brand vertical fine-tuning
    
    📺 VIDEO APERTURE (on .home-hero .hero-tv.frame2 > .frame2-canvas):
    --v-left: 15%                                 // Video left position
@@ -1219,6 +1229,7 @@ header.site,
    ⚠️ GRID-NATIVE SYSTEM: All positioning via CSS Grid, no absolute positioning
    ⚠️ PARALLAX GUARD: Motion effects only apply visual transforms, not layout
    ⚠️ SCOPED UNDER .home-hero: Prevents collisions with other .frame2 components
+   ⚠️ SANE DEFAULTS: px/vw/px units for predictable scaling, no extreme offsets
 ================================================================================ */
 
 /* ⚠️ Potential Conflicts / Clarity Notes
