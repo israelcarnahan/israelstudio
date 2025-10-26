@@ -606,11 +606,6 @@ body {
 }
 
 /* Active image: render inside a padded box that matches the frame's inner area */
-/* NOTE: duplicated from above. Prefer consolidating into one block in a cleanup pass. */
-.slide-img-wrap {
-  position: relative;
-  overflow: visible;
-}
 .slide-img {
   position: absolute;
   inset: 0;
@@ -666,7 +661,7 @@ body {
     0 8px 25px rgba(255, 140, 200, 0.4),
     0 0 30px rgba(255, 182, 193, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  animation: wiggle 0.5s ease-in-out;
+  animation: wiggle-enhanced 0.5s ease-in-out;
 }
 
 .btn-sparkle:hover::before {
@@ -678,9 +673,8 @@ body {
   transform: scale(0.98);
 }
 
-/* NOTE: this redefines @keyframes wiggle with different frames.
-   Keep one canonical version later to avoid confusion. */
-@keyframes wiggle {
+/* NOTE: renamed from @keyframes wiggle to avoid conflict with simpler wiggle above */
+@keyframes wiggle-enhanced {
   0%,
   100% {
     transform: scale(1.05) rotate(1deg);
@@ -900,13 +894,9 @@ body {
   transform: translateZ(0); /* Force hardware acceleration */
 }
 
-/* NOTE: duplicate; keep one later */
-.embla-viewport-visible {
-  will-change: transform;
-}
-
 /* Allow painting to escape for the wire bleed */
 .embla-viewport-visible {
+  will-change: transform;
   contain: none;
 }
 
